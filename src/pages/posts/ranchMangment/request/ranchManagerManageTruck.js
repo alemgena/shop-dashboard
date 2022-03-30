@@ -1,23 +1,22 @@
 import  { useHistory } from 'react-router-dom';
 
+import fetch from "isomorphic-fetch";
 //import { API } from "../config";
 //import { getCookie, userSessionExpired } from "./auth";
 import {  userSessionExpired } from "./auth";
 import { url } from '../../../../utiles/config'
-
-import fetch from "isomorphic-fetch";
-const RanchManagerApiRequests = () => {
+const LiveStockApiRequests = () => {
       let token = localStorage.getItem('token')
   const navigate = useHistory();
-  const addRanchManager = (ranchManager,name) => {
-    return fetch(`${url}/admin-assign-ranchManager/${name}`, {
+  const addLiveStock = (LiveStock,id) => {
+    return fetch(`${url}/ranch-manager-add-livestock/${id}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(ranchManager),
+      body: JSON.stringify(LiveStock),
     })
       .then((response) => {
         userSessionExpired(response, navigate);
@@ -25,24 +24,8 @@ const RanchManagerApiRequests = () => {
       })
       .catch((err) => err);
   };
-  const addUser = (ranchManager) => {
-    return fetch(`${url}/admin-register-user`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(ranchManager),
-    })
-      .then((response) => {
-        userSessionExpired(response, navigate);
-        return response.json();
-      })
-      .catch((err) => err);
-  };
-  const viewUseByRole=(route)=>{
-    return fetch(`${url}/admin-list-users-byrole/${route}`, {
+  const viewAllTruck = () => {
+    return fetch(`${url}/ranch-manager-list-nearby-trucks`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -56,39 +39,7 @@ const RanchManagerApiRequests = () => {
       })
       .catch((err) => err);
   };
-  
-  const viewAllRanchManagers = () => {
-    return fetch(`${url}/admin-list-users`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-     Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        userSessionExpired(response, navigate);
-        return response.json();
-      })
-      .catch((err) => err);
-  };
-  const viewAllDrver = (route) => {
-    console.log(route)
-    return fetch(`${url}/admin-list-users/${route}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-     Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        userSessionExpired(response, navigate);
-        return response.json();
-      })
-      .catch((err) => err);
-  };
-  const deleteRanchManager = (username) => {
+  const deleteLiveStock = (username) => {
     return fetch(`${url}/admin-delete-user/${username}`, {
       method: "DELETE",
       headers: {
@@ -103,7 +54,22 @@ const RanchManagerApiRequests = () => {
       })
       .catch((err) => err);
   };
-  const updateRanchManager = (ranch, username) => {
+  const AprroveRequest = (id) => {
+    return fetch(`${url}/admin-grantRequest/${id}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        userSessionExpired(response, navigate);
+        return response.json();
+      })
+      .catch((err) => err);
+  };
+  const updateLiveStock = (ranch, username) => {
     return fetch(`${url}/admin-update-user/${username}`, {
       method: "PATCH",
       headers: {
@@ -120,14 +86,12 @@ const RanchManagerApiRequests = () => {
       .catch((err) => err);
   };
   return {
-    viewUseByRole,
-    addUser,
-    viewAllDrver,
-    addRanchManager,
-    viewAllRanchManagers,
-    deleteRanchManager,
-    updateRanchManager,
+    addLiveStock,
+   viewAllTruck ,
+   AprroveRequest,
+    deleteLiveStock,
+    updateLiveStock,
   };
 };
 
-export default RanchManagerApiRequests;
+export default LiveStockApiRequests;

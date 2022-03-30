@@ -1,4 +1,5 @@
 import React from 'react'
+import fetch from "isomorphic-fetch";
 import Norecords from '../../components/ui/Norecords'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -11,7 +12,7 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import Notify from '../../components/ui/Notify'
 import Popup from '../../components/ui/Popup'
 import Controls from '../../components/ui/controls/Controls'
-import { Search, Add } from '@mui/icons-material'
+import { Search, Add, AirlineSeatIndividualSuiteSharp } from '@mui/icons-material'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
@@ -29,6 +30,8 @@ import axios from 'axios'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import RanchSupplayApiRequests from '../posts/ranchMangment/request/ranchSupplay'
 import ApprovalIcon from '@mui/icons-material/Approval'
+import LiveStockRequest from '../manageRequest/requestLiveStock'
+import ReplayIcon from '@mui/icons-material/Replay';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -138,10 +141,10 @@ const RanchManager = (props) => {
           message: data.err,
           type: 'error',
         })
-      } else if (data.result) {
+      } else if (data.requests) {
         console.log(data)
         setLoading(false)
-        setRanchManagers(data.result)
+        setRanchManagers(data.requests)
       }
     })
   }, [])
@@ -237,11 +240,29 @@ const RanchManager = (props) => {
     setOpenRanch(true)
   }
   console.log(newData)
-
+const sendResponse=(id,quantity)=>{
+sendDataResponse(id,quantity).then((data)=>{
+  console.log(data)
+})
+}
+const sendDataResponse=(id,quantity)=>{
+                let token = localStorage.getItem('token')
+return fetch(`${url}/${id}/respond-to-request/${quantity}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+      },
+     // body: JSON.stringify(quantity),
+    }).then((response)=>{
+    return response.json()
+    })
+}
   return (
-    <OftadehLayout>
+   <OftadehLayout>
       <Typography className={classes.mb3} variant="h5" component="h1">
-        LiveStock Supplier Mangement
+        Request Mangement
       </Typography>
       <OftadehBreadcrumbs path={history} />
       <Toolbar>
@@ -273,60 +294,39 @@ const RanchManager = (props) => {
             <TblHead />
             <TableBody>
               {recordsAfterPagingAndSorting().length > 0 ? (
-                recordsAfterPagingAndSorting().map((item, index) => (
+                recordsAfterPagingAndSorting().map((item,index) => (
                   <TableRow key={index}>
-                    <TableCell>
-                      {item.approved ? <span>True</span> : <span>False</span>}
-                    </TableCell>
-                    <TableCell>
-                      {item.ordered ? <span>True</span> : <span>False</span>}
-                    </TableCell>
+                    <TableCell>True</TableCell>
+                    <TableCell>{item.ordered?<span>True</span>:<span>False</span>}</TableCell>
                     <TableCell>{item.type}</TableCell>
                     <TableCell>{item.ranchname}</TableCell>
+                          <TableCell>{new Date(item.createdAt).toLocaleString(
+                                "en-US",
+                                { hour12: true }
+                              )}</TableCell>
                     <TableCell>
-                      {new Date(item.createdAt).toLocaleString('en-US', {
-                        hour12: true,
-                      })}
-                    </TableCell>
-                    <TableCell>
-                      <Controls.ActionButton
+                     
+                      <span style={{marginTop:"20px"}}>
+                               <Controls.ActionButton
                         color="primary"
-                        title="Approve"
+                        title="View Detile Request"
                         variant="contained"
-                        onClick={() => {
-                          openInPopup(item)
+                     onClick={() => {
+                          handelDetailes(item.id)
                         }}
                       >
-                        <ApprovalIcon fontSize="small" />
+                        <ViewListIcon fontSize="small" />
                       </Controls.ActionButton>
-                      <span style={{ marginTop: '20px' }}>
-                        <Controls.ActionButton
-                          color="primary"
-                          title="View Detile Request"
-                          variant="contained"
-                          onClick={() => {
-                            handelDetailes(item.id)
-                          }}
-                        >
-                          <ViewListIcon fontSize="small" />
-                        </Controls.ActionButton>
                       </span>
 
                       <Controls.ActionButton
                         color="secondary"
-                        title="Delete"
-                        onClick={() => {
-                          setConfirmDialog({
-                            isOpen: true,
-                            title: 'Are you sure to delete this product?',
-                            subTitle: "You can't undo this operation",
-                            onConfirm: () => {
-                              onDelete(item.username)
-                            },
-                          })
+                        title="respond to request"
+                      onClick={() => {
+                          sendResponse(item.id,item.quantity)
                         }}
                       >
-                        <DeleteOutlineIcon fontSize="small" />
+                        <ReplayIcon fontSize="small" />
                       </Controls.ActionButton>
                     </TableCell>
                   </TableRow>
@@ -356,13 +356,13 @@ const RanchManager = (props) => {
           recordForEdit={recordForEdit}
           setRanchManagers={setRanchManagers}
         />
-      </Popup>
-      <Popup
+        </Popup>
+            <Popup
         title="LiveStock Form"
         openPopup={openPopupLiveStock}
         setOpenPopup={setOpenPopLiveStock}
       >
-        <LiveStockForm
+            <LiveStockForm
           NotifyMessage={NotifyMessage}
           setOpenPopup={setOpenPopLiveStock}
           recordForEdit={recordForEdit}
@@ -370,13 +370,18 @@ const RanchManager = (props) => {
           setId={id}
         />
       </Popup>
-      <Popup
-        title="Ranch Supplay Data"
+          <Popup 
+        title=" Request  Data"
         openPopup={openRanch}
         setOpenPopup={setOpenRanch}
-      ></Popup>
+      >
+        <LiveStockRequest
+        data={newData}
+        />
+      </Popup>
     </OftadehLayout>
   )
 }
+
 
 export default RanchManager

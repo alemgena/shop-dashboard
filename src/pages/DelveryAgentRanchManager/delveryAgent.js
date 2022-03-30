@@ -21,9 +21,8 @@ import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
 import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
-
-import TruckApiRequest from '../posts/ranchMangment/request/truckRequest'
-import TruckForm from '../../components/forms/DeliveryAgent/truck'
+import DeliveryAgentApiRequest from '../posts/ranchMangment/request/deliveryAgentRequest'
+import DeliveryAgentForm from '../../components/forms/DeliveryAgent/DeliveryAgent'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,23 +73,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 const headCells = [
-  { id: 'capacity', label: 'Capacity' },
-  { id: 'cargo', label: 'Cargo' },
-  { id: 'location', label: 'Current Location' },
-  { id: 'licencePlate', label: 'Licence Plate' },
-  { id: 'onduty', label: 'ON Duty' },
+  { id: 'firstName', label: 'First Name' },
+  { id: 'lastName', label: 'Last Name' },
+  { id: 'email', label: 'Email' },
+  { id: 'phoneNo', label: 'Phone Number' },
+  { id: 'username', label: 'Username' },
   { id: 'actions', label: 'Actions', disableSorting: true },
 ]
 
 const RanchManager = (props) => {
   const { history } = props
   const classes = useStyles()
-  const [openPopup, setOpenPopup] = useState(false)
+  const [openPopup, setOpenPopup] = useState(true)
   const [Q, setQ] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [recordForEdit, setRecordForEdit] = useState(null)
   const { NotifyMessage, notify, setNotify } = Notify()
-  const {viewTruck,deleteTruck  } = TruckApiRequest()
+  const {viewAllDeliveryAgent, deleteDeliveryAgent   } = DeliveryAgentApiRequest()
   const [deliveryAgent,setDeliveryAgent] = useState([])
   const [filterFn, setFilterFn] = useState({
     fn: (items) => {
@@ -104,18 +103,17 @@ const RanchManager = (props) => {
   })
 
   useEffect(() => {
-    viewTruck().then((data) => {
-   console.log('all truck is',data)
+    viewAllDeliveryAgent().then((data) => {
+   console.log(data)
       if (data.err) {
         NotifyMessage({
           message: data.err,
           type: 'error',
         })
-     
-      } else if (data) {
+      } else if (data.deliveryAgent) {
        // console.log(data)
         setLoading(false)
-        setDeliveryAgent(data)
+        setDeliveryAgent(data.deliveryAgent)
       }
     })
   }, [])
@@ -157,7 +155,7 @@ console.log(deliveryAgent)
       ...confirmDialog,
       isOpen: false,
     })
-    deleteTruck(ranchName).then((data) => {
+    deleteDeliveryAgent(ranchName).then((data) => {
       if (data.err) {
         NotifyMessage({
           message: data.err,
@@ -237,11 +235,11 @@ console.log(deliveryAgent)
               {recordsAfterPagingAndSorting().length > 0 ? (
                 recordsAfterPagingAndSorting().map((item,index) => (
                   <TableRow  key={index}>
-                    <TableCell>{item.capacity}</TableCell>
-                    <TableCell>{item.cargo}</TableCell>
-                    <TableCell>{item.currentLocation}</TableCell>
-                    <TableCell>{item.licencePlate}</TableCell>
-                     <TableCell>{item.licencePlate?<span>True</span>:<span>false</span>}</TableCell>
+                    <TableCell>{item.firstName}</TableCell>
+                    <TableCell>{item.lastName}</TableCell>
+                    <TableCell>{item.email}</TableCell>
+                    <TableCell>{item.phoneNo}</TableCell>
+                    <TableCell>{item.username}</TableCell>
                     <TableCell>
                       <Controls.ActionButton
                         color="primary"
@@ -287,11 +285,11 @@ console.log(deliveryAgent)
       />
       <Notification notify={notify} setNotify={setNotify} />
       <Popup
-        title="Delivery Truck Form"
+        title="Delivery Agent Form"
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <TruckForm
+        <DeliveryAgentForm
           NotifyMessage={NotifyMessage}
           setOpenPopup={setOpenPopup}
           recordForEdit={recordForEdit}

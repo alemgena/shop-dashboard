@@ -29,6 +29,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import RequestaPI from '../../pages/posts/ranchMangment/request/ranchManagerLiveStock'
 import Notification from '../../components/ui/Notification'
 import Notify from '../../components/ui/Notify'
+import fetch from "isomorphic-fetch";
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -290,16 +291,40 @@ axios.get(`${url}/ranch-manager-livestocksupplier-livestocks/${props.id}`,{ head
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - user.length) : 0;
      const { NotifyMessage, notify, setNotify } = Notify()
     const {sendResponse}=RequestaPI();
-       const Response=()=>{
+const SendResponse=()=>{
+  Response(electedLiveStocks).then((data)=>{
+    console.log(data.message)
+   if (data.err) {
+        NotifyMessage({
+          message: data.err,
+          type: 'error',
+        })
+      }
+    if(data.message){
+        NotifyMessage({
+          message: data.message,
+          type: 'success',
+        })
+      }
+  })
+}
+
+       const Response=(electedLiveStock)=>{
                  let token = localStorage.getItem('token')
-axios.patch(`${url}/selectLiveStocks`,{ headers: {
+            
+return fetch(`${url}/selectLiveStocks`, {
+      method: "PUT",
+      headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
-      },electedLiveStocks}).then((response)=>{
-          console.log(response)
-      })
-       }
+      },
+      body: JSON.stringify(electedLiveStock),
+    }).then((response)=>{
+    return response.json()
+    })
+       
+      }
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -339,7 +364,7 @@ axios.patch(`${url}/selectLiveStocks`,{ headers: {
                         title="Response LiveStock"
                         variant="contained"
                         onClick={
-                          Response
+                          SendResponse
                         }
                       >
                         <ReplayIcon fontSize="small" />

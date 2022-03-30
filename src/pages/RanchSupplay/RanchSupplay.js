@@ -86,7 +86,7 @@ const RanchManager = (props) => {
   const classes = useStyles()
   const [openPopup, setOpenPopup] = useState(false)
   const [Q, setQ] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [recordForEdit, setRecordForEdit] = useState(null)
   const { NotifyMessage, notify, setNotify } = Notify()
   const {viewAllRanchSUpplay, deleteRanchSUpplay} = RanchSupplayApiRequests()

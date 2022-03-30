@@ -47,6 +47,44 @@ const navigationConfig = [
         url: "/manageRequest",
         exact: true,
       },
+
+       {
+        id: "main deliveryAgent",
+        title: "Manage Delivery Agent",
+        type: "collapse",
+        icon: <AgricultureIcon/>,
+        children: [
+          {
+            id: "deliveryAgent",
+            title: "Delivery Agent",
+            type: "item",
+            url: "/deliveryagent",
+            exact: true,
+          },
+          {
+            id: "delivery track",
+            title: " Manage Truck",
+            type: "item",
+            url: "/deliverytruck",
+            exact: true,
+          },
+             {
+            id: "driver",
+            title: "Truck Driver",
+            type: "item",
+            url: "/truckDriver",
+            exact: true,
+          },
+        ],
+      },
+          {
+        id: "nearbytruck",
+        title: "Nearby Trucks",
+        type: "item",
+        icon: "event",
+        url: "/nerbytrucks",
+        exact: true,
+      },
     ],
   },
   {

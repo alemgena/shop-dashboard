@@ -1,22 +1,21 @@
 import  { useHistory } from 'react-router-dom';
 
-import fetch from "isomorphic-fetch";
 //import { API } from "../config";
 //import { getCookie, userSessionExpired } from "./auth";
 import {  userSessionExpired } from "./auth";
 import { url } from '../../../../utiles/config'
-const LiveStockApiRequests = () => {
+const DeliveryAgentApiRequest = () => {
       let token = localStorage.getItem('token')
   const navigate = useHistory();
-  const addLiveStock = (LiveStock) => {
-    return fetch(`${url}/ranch-manager-register-local-livestock-supplier`, {
+  const addDerliveryAgent = (ranchManager) => {
+    return fetch(`${url}/admin-register-deliveryAgent`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(LiveStock),
+      body: JSON.stringify(ranchManager),
     })
       .then((response) => {
         userSessionExpired(response, navigate);
@@ -24,9 +23,8 @@ const LiveStockApiRequests = () => {
       })
       .catch((err) => err);
   };
-  const viewAllLiveStockSupplier = () => {
-    return fetch(`${url}/ranch-manager-view-local-livestock-supplier`, {
-
+  const viewAllDeliveryAgent = () => {
+    return fetch(`${url}/admin-listalldeliveryAgent`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -35,14 +33,13 @@ const LiveStockApiRequests = () => {
       },
     })
       .then((response) => {
-        console.log(response)
         userSessionExpired(response, navigate);
         return response.json();
       })
       .catch((err) => err);
   };
-  const deleteRanchManager = (username) => {
-    return fetch(`${url}/admin-delete-user/${username}`, {
+  const deleteDeliveryAgent = (username) => {
+    return fetch(`${url}/admin-delete-deliveryAgent`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -56,8 +53,8 @@ const LiveStockApiRequests = () => {
       })
       .catch((err) => err);
   };
-  const updateLiveStock = (ranch, username) => {
-    return fetch(`${url}/admin-update-user/${username}`, {
+  const updateDeliveryAgent = (ranch, username) => {
+    return fetch(`${url}/admin-update-deliveryAgent`, {
       method: "PATCH",
       headers: {
         Accept: "application/json",
@@ -73,11 +70,8 @@ const LiveStockApiRequests = () => {
       .catch((err) => err);
   };
   return {
-    addLiveStock,
-    viewAllLiveStockSupplier,
-    deleteRanchManager,
-    updateLiveStock,
+    addDerliveryAgent, viewAllDeliveryAgent,deleteDeliveryAgent,updateDeliveryAgent,
   };
 };
 
-export default LiveStockApiRequests;
+export default DeliveryAgentApiRequest;

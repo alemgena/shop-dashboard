@@ -1,4 +1,5 @@
 import React from 'react'
+import fetch from "isomorphic-fetch";
 import Norecords from '../../components/ui/Norecords'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -11,20 +12,26 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import Notify from '../../components/ui/Notify'
 import Popup from '../../components/ui/Popup'
 import Controls from '../../components/ui/controls/Controls'
-import { Search, Add } from '@mui/icons-material'
+import { Search, Add, AirlineSeatIndividualSuiteSharp } from '@mui/icons-material'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
 import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
+import OftadehBreadcrumbs from '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
+import { url } from '../../utiles/config'
+import requestApi from '../posts/ranchMangment/request/ranchManagerViewRequest'
+import LiveStockSupplierForm from '../../components/forms/LiveStock/LiveStockSuplierForm'
+import LiveStockForm from '../../components/forms/LiveStock/LIveStock'
+import axios from 'axios'
+import ViewListIcon from '@mui/icons-material/ViewList'
+import TruckApiRequests from '../posts/ranchMangment/request/ranchManagerManageTruck'
+import ApprovalIcon from '@mui/icons-material/Approval'
 
-import TruckApiRequest from '../posts/ranchMangment/request/truckRequest'
-import TruckForm from '../../components/forms/DeliveryAgent/truck'
-
+import ReplayIcon from '@mui/icons-material/Replay';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -73,25 +80,28 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Times New Roman',
   },
 }))
+
 const headCells = [
-  { id: 'capacity', label: 'Capacity' },
-  { id: 'cargo', label: 'Cargo' },
-  { id: 'location', label: 'Current Location' },
-  { id: 'licencePlate', label: 'Licence Plate' },
-  { id: 'onduty', label: 'ON Duty' },
+  { id: 'approved', label: 'Approved' },
+  { id: 'ordered', label: 'Ordered' },
+  { id: 'type', label: 'Type' },
+  { id: 'ranchname', label: 'Ranch' },
+  { id: 'createdAt', label: 'CreatedAt' },
   { id: 'actions', label: 'Actions', disableSorting: true },
 ]
 
 const RanchManager = (props) => {
+  const { viewAllTruck } = TruckApiRequests()
   const { history } = props
   const classes = useStyles()
   const [openPopup, setOpenPopup] = useState(false)
+  const [openPopupLiveStock, setOpenPopLiveStock] = useState(false)
   const [Q, setQ] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [recordForEdit, setRecordForEdit] = useState(null)
   const { NotifyMessage, notify, setNotify } = Notify()
-  const {viewTruck,deleteTruck  } = TruckApiRequest()
-  const [deliveryAgent,setDeliveryAgent] = useState([])
+  const { viewAllRequest, deleteRanchManager } = requestApi()
+  const [ranchManagers, setRanchManagers] = useState([])
   const [filterFn, setFilterFn] = useState({
     fn: (items) => {
       return items
@@ -102,42 +112,54 @@ const RanchManager = (props) => {
     title: '',
     subTitle: '',
   })
-
-  useEffect(() => {
-    viewTruck().then((data) => {
-   console.log('all truck is',data)
+  const [ranch, setRanch] = useState()
+  useEffect(()=>{
+  viewAllTruck().then((data) => {
+      console.log(data)
       if (data.err) {
         NotifyMessage({
           message: data.err,
           type: 'error',
         })
-     
-      } else if (data) {
-       // console.log(data)
+      } else if (data.supplies) {
+        // console.log(data)
         setLoading(false)
-        setDeliveryAgent(data)
+        data.supplies.forEach((el) => {
+        setRanch(el.name)
+      }
+    )
+  }
+})
+  },[])
+  console.log(ranch)
+  useEffect(() => {
+    console.log('the ranch that is send to the server',ranch)
+    viewAllRequest().then((data) => {
+      console.log(data)
+      if (data.err) {
+        NotifyMessage({
+          message: data.err,
+          type: 'error',
+        })
+      } else if (data.requests) {
+        console.log(data)
+        setLoading(false)
+        setRanchManagers(data.requests)
       }
     })
   }, [])
-console.log(deliveryAgent)
+
   const {
     TblContainer,
     TblHead,
     TblPagination,
     recordsAfterPagingAndSorting,
-  } = useTable(deliveryAgent, headCells, filterFn)
+  } = useTable(ranchManagers, headCells, filterFn)
 
   useEffect(() => {
     setFilterFn({
       fn: (items) => {
-       const columns = [
-          'firstName',
-          'lastName',
-          'phoneNo',
-          'email',
-          'username',
-        
-        ]
+        const columns = ['firstName', 'lastName', 'location', 'ranch']
 
         if (Q === '') return items
         else {
@@ -152,25 +174,26 @@ console.log(deliveryAgent)
   }, [Q])
 
   const onDelete = (ranchName) => {
-          console.log(ranchName)
+    console.log(ranchName)
     setConfirmDialog({
       ...confirmDialog,
       isOpen: false,
     })
-    deleteTruck(ranchName).then((data) => {
+    deleteRanchManager(ranchName).then((data) => {
       if (data.err) {
         NotifyMessage({
           message: data.err,
           type: 'error',
         })
       } else {
+        console.log(data)
         NotifyMessage({
           message: data.msg,
           type: 'success',
         })
-        setDeliveryAgent(
-          produce(deliveryAgent, (draft) => {
-            const index = deliveryAgent.findIndex(
+        setRanchManagers(
+          produce(ranchManagers, (draft) => {
+            const index = ranchManagers.findIndex(
               (ranch) => ranch.username === ranchName,
             )
             if (index !== -1) draft.splice(index, 1)
@@ -179,26 +202,74 @@ console.log(deliveryAgent)
       }
     })
   }
+  const [openView, setOpenView] = useState(false)
+  const [viewDataa, setViewDataa] = useState([])
+  const openViewLiveStock = (item) => {
+    setOpenView(true)
+
+    setViewDataa(item)
+  }
   const openInPopup = (item) => {
     setRecordForEdit({ ...item, editing: true })
     setOpenPopup(true)
   }
-  const[openRanch,setOpenRanch]=useState(false)
-   const[newData,setNewData]=useState(false)
-  let newRanch;
+  const [id, setId] = useState('')
+  const openInLiveStock = (id) => {
+    let token = localStorage.getItem('token')
+    axios
+      .get(`${url}/ranch-manager-livestocksupplier-livestock-quantity/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response.data.livestockSupplierQuantity)
+      })
+    setOpenPopLiveStock(true)
+    setId(id)
+  }
 
-  
+  const [openRanch, setOpenRanch] = useState(false)
+  const [newData, setNewData] = useState()
+  let newRanch
+  const handelDetailes = (id) => {
+    newRanch = ranchManagers.filter((element) => element.id === id)
+    setNewData(newRanch)
+    setOpenRanch(true)
+  }
+  console.log(newData)
+const sendResponse=(id,quantity)=>{
+sendDataResponse(id,quantity).then((data)=>{
+  console.log(data)
+})
+}
+const sendDataResponse=(id,quantity)=>{
+                let token = localStorage.getItem('token')
+return fetch(`${url}/${id}/respond-to-request/${quantity}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+      },
+     // body: JSON.stringify(quantity),
+    }).then((response)=>{
+    return response.json()
+    })
+}
   return (
-    <OftadehLayout>
+   <OftadehLayout>
       <Typography className={classes.mb3} variant="h5" component="h1">
-        Ranch Mangement
+        Request Mangement
       </Typography>
       <OftadehBreadcrumbs path={history} />
       <Toolbar>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={8}>
             <Controls.Input
-              label="Search Delivery Agent"
+              label="Search LiveStock Supplier"
               fullWidth
               value={Q}
               InputProps={{
@@ -213,18 +284,6 @@ console.log(deliveryAgent)
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Controls.Button
-              text="Add New"
-              variant="outlined"
-              startIcon={<Add />}
-              color="secondary"
-              onClick={() => {
-                setOpenPopup(true)
-                setRecordForEdit(null)
-              }}
-            />
-          </Grid>
         </Grid>
       </Toolbar>
       {loading ? (
@@ -236,38 +295,38 @@ console.log(deliveryAgent)
             <TableBody>
               {recordsAfterPagingAndSorting().length > 0 ? (
                 recordsAfterPagingAndSorting().map((item,index) => (
-                  <TableRow  key={index}>
-                    <TableCell>{item.capacity}</TableCell>
-                    <TableCell>{item.cargo}</TableCell>
-                    <TableCell>{item.currentLocation}</TableCell>
-                    <TableCell>{item.licencePlate}</TableCell>
-                     <TableCell>{item.licencePlate?<span>True</span>:<span>false</span>}</TableCell>
+                  <TableRow key={index}>
+                    <TableCell>True</TableCell>
+                    <TableCell>{item.ordered?<span>True</span>:<span>False</span>}</TableCell>
+                    <TableCell>{item.type}</TableCell>
+                    <TableCell>{item.ranchname}</TableCell>
+                          <TableCell>{new Date(item.createdAt).toLocaleString(
+                                "en-US",
+                                { hour12: true }
+                              )}</TableCell>
                     <TableCell>
-                      <Controls.ActionButton
+                     
+                      <span style={{marginTop:"20px"}}>
+                               <Controls.ActionButton
                         color="primary"
-                        title="Update"
+                        title="View Detile Request"
                         variant="contained"
-                        onClick={() => {
-                          openInPopup(item)
+                     onClick={() => {
+                          handelDetailes(item.id)
                         }}
                       >
-                        <EditIcon fontSize="medium" />
+                        <ViewListIcon fontSize="small" />
                       </Controls.ActionButton>
+                      </span>
+
                       <Controls.ActionButton
                         color="secondary"
-                        title="Delete"
-                        onClick={() => {
-                          setConfirmDialog({
-                            isOpen: true,
-                            title: 'Are you sure to delete this product?',
-                            subTitle: "You can't undo this operation",
-                            onConfirm: () => {
-                              onDelete(item.username)
-                            },
-                          })
+                        title="respond to request"
+                      onClick={() => {
+                          sendResponse(item.id,item.quantity)
                         }}
                       >
-                        <DeleteOutlineIcon fontSize="medium" />
+                        <ReplayIcon fontSize="small" />
                       </Controls.ActionButton>
                     </TableCell>
                   </TableRow>
@@ -287,19 +346,39 @@ console.log(deliveryAgent)
       />
       <Notification notify={notify} setNotify={setNotify} />
       <Popup
-        title="Delivery Truck Form"
+        title="LiveStock Supplier Form"
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <TruckForm
+        <LiveStockSupplierForm
           NotifyMessage={NotifyMessage}
           setOpenPopup={setOpenPopup}
           recordForEdit={recordForEdit}
-          setRanchManagers={setDeliveryAgent}
+          setRanchManagers={setRanchManagers}
         />
+        </Popup>
+            <Popup
+        title="LiveStock Form"
+        openPopup={openPopupLiveStock}
+        setOpenPopup={setOpenPopLiveStock}
+      >
+            <LiveStockForm
+          NotifyMessage={NotifyMessage}
+          setOpenPopup={setOpenPopLiveStock}
+          recordForEdit={recordForEdit}
+          setRanchManagers={setRanchManagers}
+          setId={id}
+        />
+      </Popup>
+          <Popup 
+        title=" Request  Data"
+        openPopup={openRanch}
+        setOpenPopup={setOpenRanch}
+      >
       </Popup>
     </OftadehLayout>
   )
 }
+
 
 export default RanchManager

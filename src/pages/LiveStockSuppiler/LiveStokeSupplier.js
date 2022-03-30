@@ -117,7 +117,10 @@ const RanchManager = (props) => {
           type: 'error',
         })
       } else if (data.livestockSuppliers) {
-        console.log(data)
+           NotifyMessage({
+          message: data.msg,
+          type: 'success',
+        })
         setLoading(false)
         setRanchManagers(data.livestockSuppliers)
       }

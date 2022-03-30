@@ -19,10 +19,16 @@ import {LiveStockPageConfig} from '../pages/LiveStock/LiveStockPageConfig'
 import{RanchSupplayPageConfig} from '../pages/RanchSupplay/RanchSupplayPageConfig'
 import { DeliveryAgentPageConfig } from "../pages/DelveryAgent/DeliveryAgentPageConfig";
 import { TruckPageConfig } from "../pages/DelveryAgent/TruckPageConfig";
+import { DeliveryAgentPage } from "../pages/DelveryAgentRanchManager/DeliveryAgentPageConfig";
+import { TruckPage } from "../pages/DelveryAgentRanchManager/TruckPageConfig";
 import { RequestPageConfig } from "../pages/manageRequest/RequestPageConfig";
 import {RanchManagerRequestPageConfig} from '../pages/RanchManagerRequest/requestPageConfig'
+import {NearByTruckPageConfig} from '../pages/RanchManagerManageTruck/NearbyTruckPageConfig'
 const routeConfigs = [
+  ...DeliveryAgentPage.routes,
+  ...TruckPage.routes,
   ...TruckDriverPageConfig.routes,
+  ...NearByTruckPageConfig.routes,
   ...RanchManagerRequestPageConfig.routes,
   ...TruckPageConfig.routes,
   ...RanchSupplayPageConfig.routes,
