@@ -2,6 +2,7 @@
 import PersonIcon from '@mui/icons-material/Person';
 import React from 'react'
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 const navigationConfig = [
   {
     id: "Main",
@@ -12,7 +13,7 @@ const navigationConfig = [
         id: "LiveStock manage",
         title: "Manage LiveStock",
         type: "collapse",
-        icon: <AgricultureIcon/>,
+        icon: <FormatAlignLeftIcon/>,
        
         children: [
           {
@@ -35,7 +36,7 @@ const navigationConfig = [
         id: "ranch supplay",
         title: "Ranch Supplay",
         type: "item",
-        icon: "event",
+        icon:<FormatAlignLeftIcon/>,
         url: "/ranchSupplay",
         exact: true,
       },
@@ -43,7 +44,7 @@ const navigationConfig = [
         id: "request",
         title: "Manage Request",
         type: "item",
-        icon: "event",
+        icon: <FormatAlignLeftIcon/>,
         url: "/manageRequest",
         exact: true,
       },
@@ -52,27 +53,27 @@ const navigationConfig = [
         id: "main deliveryAgent",
         title: "Manage Delivery Agent",
         type: "collapse",
-        icon: <AgricultureIcon/>,
+        icon: <FormatAlignLeftIcon/>,
         children: [
           {
             id: "deliveryAgent",
             title: "Delivery Agent",
             type: "item",
-            url: "/deliveryagent",
+            url: "/delivery",
             exact: true,
           },
           {
             id: "delivery track",
             title: " Manage Truck",
             type: "item",
-            url: "/deliverytruck",
+            url: "/truck",
             exact: true,
           },
              {
             id: "driver",
             title: "Truck Driver",
             type: "item",
-            url: "/truckDriver",
+            url: "/driver",
             exact: true,
           },
         ],
@@ -81,7 +82,7 @@ const navigationConfig = [
         id: "nearbytruck",
         title: "Nearby Trucks",
         type: "item",
-        icon: "event",
+        icon: <FormatAlignLeftIcon/>,
         url: "/nerbytrucks",
         exact: true,
       },

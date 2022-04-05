@@ -4,12 +4,19 @@ import OftadehNavCollapse from "./OftadehNavCollapse";
 import OftadehNavItem from "./OftadehNavItem";
 import OftadehNavLink from "./OftadehNavLink";
 import { ListSubheader } from "@material-ui/core";
-
+import { makeStyles } from "@material-ui/styles";
+const useStyles = makeStyles(theme => ({
+  root: {
+    paddingLeft: 0,
+    marginLeft:"40px"
+    
+  }
+}));
 const OftadehNavGroup = props => {
   const { item } = props;
-
+const classes=useStyles();
   return (
-    <>
+    <div className={classes.root}>
       <ListSubheader>{item.title}</ListSubheader>
 
       {item.children && (
@@ -27,7 +34,7 @@ const OftadehNavGroup = props => {
           ))}
         </React.Fragment>
       )}
-    </>
+    </div>
   );
 };
 

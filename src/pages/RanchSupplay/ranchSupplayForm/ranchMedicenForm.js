@@ -6,6 +6,11 @@ import { useEffect, useState } from 'react'
 import RanchSupplayApiRequests from "../../../pages/posts/ranchMangment/request/ranchSupplay"
 import RanchApiRequests from '../../../pages/posts/ranchMangment/request/requestRanch'
 import produce from 'immer'
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
+import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
 const initialFValues = {
   name: '',
   quantity: '',
@@ -109,30 +114,37 @@ const RanchManagerForm = ({
                    console.log(data)
           if (data.err) {
             setValues({ ...values, submitting: false })
-            NotifyMessage({
-              message: data.err,
-              type: 'error',
-            })
           } else {
    
-            setRanchManagers(
-              produce((draft) => {
-                draft.unshift({ ...data })
-              }),
-            )
-            NotifyMessage({
-              message: 'Ranch Ranch Supplay created.',
-              type: 'success',
-            })
-            setOpenPopup(false)
+            setOpen(true)
             resetForm()
           }
         })
       
     }
   }
-
+    const [open, setOpen] = React.useState(false);
   return (
+    <div>
+       <Collapse in={open}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+       Medicen Added
+        </Alert>
+      </Collapse>
     <Form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
@@ -184,16 +196,16 @@ const RanchManagerForm = ({
                <Grid item xs={12} md={6}>
           <Controls.Input
             label="Descrieption"
-            name="descrieption"
-            value={values.descrieption}
+            name="discription"
+            value={values.discription}
             onChange={handleInputChange}
-            error={errors.descrieption}
+            error={errors.discription}
           />
         </Grid>
                  <Grid item xs={12} md={6}>
           <Controls.Input
             label="Rounds"
-            name="round"
+            name="rounds"
             value={values.rounds}
             onChange={handleInputChange}
             error={errors.rounds}
@@ -228,6 +240,7 @@ const RanchManagerForm = ({
         </Grid>
       </Grid>
     </Form>
+    </div>
   )
 }
 export default RanchManagerForm

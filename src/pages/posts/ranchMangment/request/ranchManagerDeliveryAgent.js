@@ -8,7 +8,7 @@ const DeliveryAgentApiRequest = () => {
       let token = localStorage.getItem('token')
   const navigate = useHistory();
   const addDerliveryAgent = (ranchManager) => {
-    return fetch(`${url}/admin-register-deliveryAgent`, {
+    return fetch(`${url}/register-deliveryAgent`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -24,7 +24,7 @@ const DeliveryAgentApiRequest = () => {
       .catch((err) => err);
   };
   const viewAllDeliveryAgent = () => {
-    return fetch(`${url}/admin-listalldeliveryAgent`, {
+    return fetch(`${url}/listalldeliveryAgent`, {
       method: "GET",
       headers: {
         Accept: "application/json",

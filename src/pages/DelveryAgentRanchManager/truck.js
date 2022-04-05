@@ -16,15 +16,16 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
+import fetch from "isomorphic-fetch";
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
-
-import TruckApiRequest from '../posts/ranchMangment/request/truckRequest'
-import TruckForm from '../../components/forms/DeliveryAgent/truck'
-
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import TruckApiRequest from '../posts/ranchMangment/request/ranchManagerTruck'
+import TruckForm from '../../components/forms/DelveryAgentRanchManger/truck'
+import { url } from '../../utiles/config'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -112,10 +113,10 @@ const RanchManager = (props) => {
           type: 'error',
         })
      
-      } else if (data) {
+      } else if (data.trucks) {
        // console.log(data)
         setLoading(false)
-        setDeliveryAgent(data)
+        setDeliveryAgent(data.trucks)
       }
     })
   }, [])
@@ -186,19 +187,58 @@ console.log(deliveryAgent)
   const[openRanch,setOpenRanch]=useState(false)
    const[newData,setNewData]=useState(false)
   let newRanch;
+const handleOnChangeDuty=(id,onduty)=>{
+  let state;
+  if(onduty){
+    state='false'
+  }
+  else{
+    state='true'
+  }
+sendOnDuty(id,state).then((data)=>{
+  console.log(data)
+if(data.err){
 
+}
+else if (data.truck){
+     NotifyMessage({
+          message:'On Duty Is Change',
+          type: 'success',
+        })
+     let   approve = deliveryAgent.findIndex((element) => element.id === id)
+     //objIndex = myArray.findIndex((obj => obj.id == 1));
+     deliveryAgent[approve].onduty =data.truck
+      
+}
+})
+}
+const sendOnDuty=(id,state)=>{
+         let token = localStorage.getItem('token')
+        console.log(state);
+return fetch(`${url}/${id}/updatetruckstate/${state}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+      },
+        
+    }).then((response)=>{
+    return response.json()
+    })
+}
   
   return (
     <OftadehLayout>
       <Typography className={classes.mb3} variant="h5" component="h1">
-        Ranch Mangement
+        Truck Mangement
       </Typography>
       <OftadehBreadcrumbs path={history} />
       <Toolbar>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={8}>
             <Controls.Input
-              label="Search Delivery Agent"
+              label="Search  Truck"
               fullWidth
               value={Q}
               InputProps={{
@@ -241,7 +281,7 @@ console.log(deliveryAgent)
                     <TableCell>{item.cargo}</TableCell>
                     <TableCell>{item.currentLocation}</TableCell>
                     <TableCell>{item.licencePlate}</TableCell>
-                     <TableCell>{item.licencePlate?<span>True</span>:<span>false</span>}</TableCell>
+                     <TableCell>{item.onduty?<span>True</span>:<span>false</span>}</TableCell>
                     <TableCell>
                       <Controls.ActionButton
                         color="primary"
@@ -252,6 +292,16 @@ console.log(deliveryAgent)
                         }}
                       >
                         <EditIcon fontSize="medium" />
+                      </Controls.ActionButton>
+                           <Controls.ActionButton
+                        color="primary"
+                        title="Change OnDuty"
+                        variant="contained"
+                        onClick={() => {
+                        handleOnChangeDuty(item.id,item.onduty)
+                        }}
+                      >
+                        <TaskAltIcon fontSize="medium" />
                       </Controls.ActionButton>
                       <Controls.ActionButton
                         color="secondary"

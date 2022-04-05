@@ -1,7 +1,7 @@
 import React from "react";
 
 import NavigationContext from "../../context/NavigationContext";
-import OftadehDrawer from "./OftadehDrawer";
+import Drawer from "./Drawer";
 
 import Main from "./Main";
 import Header from "./Header";
@@ -63,7 +63,7 @@ const Layout = (props) => {
       }}
     >
       <Header />
-      <OftadehDrawer drawerWidth={300} />
+      <Drawer drawerWidth={350} />
       <OftadehRightPanel />
       <Main drawerWidth={240} />
     </NavigationContext.Provider>

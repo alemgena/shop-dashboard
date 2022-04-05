@@ -17,12 +17,12 @@ import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
-import RanchManagerApiRequests from '../posts/ranchMangment/request/requestRanchManager'
-import TruckDriver from '../../components/forms/DeliveryAgent/truckDriver'
+import RanchManagerApiRequests from '../posts/ranchMangment/request/ranchManagerTruckDriver'
+import TruckDriver from '../../components/forms/DelveryAgentRanchManger/truckDriver'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -88,7 +88,7 @@ const RanchManager = (props) => {
   const [loading, setLoading] = useState(true)
   const [recordForEdit, setRecordForEdit] = useState(null)
   const { NotifyMessage, notify, setNotify } = Notify()
-  const { viewUseByRole, deleteRanchManager } = RanchManagerApiRequests()
+  const { viewAllDriver, deleteRanchManager } = RanchManagerApiRequests()
   const [deliveryAgent,setDeliveryAgent] = useState([])
   const [filterFn, setFilterFn] = useState({
     fn: (items) => {
@@ -102,7 +102,7 @@ const RanchManager = (props) => {
   })
 const route='truck_driver'
   useEffect(() => {
-    viewUseByRole(route).then((data) => {
+    viewAllDriver().then((data) => {
    console.log(data)
       if (data.err) {
         NotifyMessage({

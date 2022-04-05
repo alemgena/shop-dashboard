@@ -5,7 +5,11 @@ import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
 import RanchSupplayApiRequests from "../../../pages/posts/ranchMangment/request/ranchSupplay"
 import RanchApiRequests from '../../../pages/posts/ranchMangment/request/requestRanch'
-
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
+import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
 import produce from 'immer'
 const initialFValues = {
   name: '',
@@ -112,16 +116,37 @@ const route='protein'
             setValues({ ...values, submitting: false })
          
           } else {
-  
-            setOpenPopup(false)
+     setOpen(true)
             resetForm()
           }
         })
       
     }
   }
+    const [open, setOpen] = React.useState(false);
 
   return (
+    <div>
+
+        <Collapse in={open}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+       Vaccine Added
+        </Alert>
+      </Collapse>
     <Form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
@@ -208,6 +233,7 @@ const route='protein'
         </Grid>
       </Grid>
     </Form>
+    </div>
   )
 }
 export default RanchManagerForm

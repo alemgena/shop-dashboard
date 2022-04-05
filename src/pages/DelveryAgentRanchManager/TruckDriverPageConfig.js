@@ -1,9 +1,9 @@
 import TruckDriver from "./trukDriver";
 
-export const TruckDriverPageConfig = {
+export const TruckDriverPage = {
   routes: [
     {
-      path: "/truckDriver",
+      path: "/driver",
       exact: true,
       component: TruckDriver
     }

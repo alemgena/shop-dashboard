@@ -1,5 +1,5 @@
 import React from 'react'
-import fetch from "isomorphic-fetch";
+import fetch from 'isomorphic-fetch'
 import Norecords from '../../components/ui/Norecords'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -12,15 +12,21 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import Notify from '../../components/ui/Notify'
 import Popup from '../../components/ui/Popup'
 import Controls from '../../components/ui/controls/Controls'
-import { Search, Add, AirlineSeatIndividualSuiteSharp } from '@mui/icons-material'
+import TextField from '@mui/material/TextField'
+import { Form, useForm } from '../../components/ui/useForm'
+import {
+  Search,
+  Add,
+  AirlineSeatIndividualSuiteSharp,
+} from '@mui/icons-material'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
-import { makeStyles, TextField } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import { Button } from '@mui/material'
 import { url } from '../../utiles/config'
 import requestApi from '../posts/ranchMangment/request/ranchManagerViewRequest'
@@ -30,11 +36,17 @@ import axios from 'axios'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import RanchSupplayApiRequests from '../posts/ranchMangment/request/ranchSupplay'
 import ApprovalIcon from '@mui/icons-material/Approval'
-import LiveStockRequest from '../manageRequest/requestLiveStock'
-import ReplayIcon from '@mui/icons-material/Replay';
+import Truck from './requestLiveStocks'
+import LiveStockRequest from './requestLiveStock'
+import ReplayIcon from '@mui/icons-material/Replay'
+import PersonIcon from '@mui/icons-material/Person'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+  },
+
+  text: {
+    width: 350,
   },
   my3: {
     margin: '1.3rem 0',
@@ -83,22 +95,64 @@ const useStyles = makeStyles((theme) => ({
 
 const headCells = [
   { id: 'approved', label: 'Approved' },
-  { id: 'ordered', label: 'Ordered' },
-  { id: 'type', label: 'Type' },
   { id: 'ranchname', label: 'Ranch' },
   { id: 'createdAt', label: 'CreatedAt' },
   { id: 'actions', label: 'Actions', disableSorting: true },
 ]
 
 const RanchManager = (props) => {
-  const { viewAllRanchSUpplay, deleteRanchSUpplay } = RanchSupplayApiRequests()
+  const initialFValues = {
+    type: '',
+    quantity: '',
+  }
+  const validate = (fieldValues = values) => {
+    const temp = { ...errors }
+    //const regexEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+    if ('type' in fieldValues)
+      temp.type = fieldValues.type.length !== 0 ? '' : 'This field is required.'
+    setErrors({
+      ...temp,
+    })
+
+    if (fieldValues === values)
+      return Object.values(temp).every((x) => x === '')
+  }
+  const {
+    values,
+    setValues,
+    errors,
+    setErrors,
+    handleInputChange,
+    resetForm,
+  } = useForm(initialFValues, true, validate)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (validate()) {
+      setValues({ ...values, submitting: true })
+      sendDataResponse(values).then((data) => {
+        console.log(data)
+        if(data.err){
+              if (data.err) {
+        NotifyMessage({
+          message: data.err,
+          type: 'error',
+        })
+      }
+        }
+        else if(data.message){
+              NotifyMessage({
+          message: data.message,
+        type: 'success',
+        })
+        setQuantityFrom(false)
+        }
+      })
+    }
+  }
   const { history } = props
   const classes = useStyles()
-  const [openPopup, setOpenPopup] = useState(false)
-  const [openPopupLiveStock, setOpenPopLiveStock] = useState(false)
   const [Q, setQ] = useState('')
   const [loading, setLoading] = useState(false)
-  const [recordForEdit, setRecordForEdit] = useState(null)
   const { NotifyMessage, notify, setNotify } = Notify()
   const { viewAllRequest, deleteRanchManager } = requestApi()
   const [ranchManagers, setRanchManagers] = useState([])
@@ -112,28 +166,7 @@ const RanchManager = (props) => {
     title: '',
     subTitle: '',
   })
-  const [ranch, setRanch] = useState()
-  useEffect(()=>{
-  viewAllRanchSUpplay().then((data) => {
-      console.log(data)
-      if (data.err) {
-        NotifyMessage({
-          message: data.err,
-          type: 'error',
-        })
-      } else if (data.supplies) {
-        // console.log(data)
-        setLoading(false)
-        data.supplies.forEach((el) => {
-        setRanch(el.name)
-      }
-    )
-  }
-})
-  },[])
-  console.log(ranch)
   useEffect(() => {
-    console.log('the ranch that is send to the server',ranch)
     viewAllRequest().then((data) => {
       console.log(data)
       if (data.err) {
@@ -148,19 +181,16 @@ const RanchManager = (props) => {
       }
     })
   }, [])
-
   const {
     TblContainer,
     TblHead,
     TblPagination,
     recordsAfterPagingAndSorting,
   } = useTable(ranchManagers, headCells, filterFn)
-
   useEffect(() => {
     setFilterFn({
       fn: (items) => {
         const columns = ['firstName', 'lastName', 'location', 'ranch']
-
         if (Q === '') return items
         else {
           return items.filter((x) => {
@@ -172,7 +202,6 @@ const RanchManager = (props) => {
       },
     })
   }, [Q])
-
   const onDelete = (ranchName) => {
     console.log(ranchName)
     setConfirmDialog({
@@ -202,65 +231,42 @@ const RanchManager = (props) => {
       }
     })
   }
-  const [openView, setOpenView] = useState(false)
-  const [viewDataa, setViewDataa] = useState([])
-  const openViewLiveStock = (item) => {
-    setOpenView(true)
-
-    setViewDataa(item)
-  }
-  const openInPopup = (item) => {
-    setRecordForEdit({ ...item, editing: true })
-    setOpenPopup(true)
-  }
-  const [id, setId] = useState('')
-  const openInLiveStock = (id) => {
-    let token = localStorage.getItem('token')
-    axios
-      .get(`${url}/ranch-manager-livestocksupplier-livestock-quantity/${id}`, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log(response.data.livestockSupplierQuantity)
-      })
-    setOpenPopLiveStock(true)
-    setId(id)
-  }
-
   const [openRanch, setOpenRanch] = useState(false)
   const [newData, setNewData] = useState()
-  let newRanch
-  const handelDetailes = (id) => {
-    newRanch = ranchManagers.filter((element) => element.id === id)
-    setNewData(newRanch)
+  const handelDetailes = (item) => {
+    //  newRanch = ranchManagers.filter((element) => element.id === id)
+    console.log(item.request.livestockrequest)
+    setNewData(item.request.livestockrequest)
     setOpenRanch(true)
   }
   console.log(newData)
-const sendResponse=(id,quantity)=>{
-sendDataResponse(id,quantity).then((data)=>{
-  console.log(data)
-})
-}
-const sendDataResponse=(id,quantity)=>{
-                let token = localStorage.getItem('token')
-return fetch(`${url}/${id}/respond-to-request/${quantity}`, {
-      method: "PATCH",
+  const [truck, openTruck] = useState(false)
+  const [truckId, setTrickId] = useState()
+  const [quantityForm, setQuantityFrom] = useState(false)
+  const sendResponse = (item) => {
+    setQuantityFrom(true)
+    // sendDataResponse(item)
+  }
+  const sendDataResponse = (data) => {
+    let token = localStorage.getItem('token')
+    let truckIdd = localStorage.getItem('truckId')
+    console.log(truckIdd)
+    console.log(data)
+    return fetch(`${url}/respond-to-request/${truckIdd}`, {
+      method: 'PATCH',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-     // body: JSON.stringify(quantity),
-    }).then((response)=>{
-    return response.json()
+      body: JSON.stringify(data),
+    }).then((response) => {
+      return response.json()
     })
-}
+  }
+
   return (
-   <OftadehLayout>
+    <OftadehLayout>
       <Typography className={classes.mb3} variant="h5" component="h1">
         Request Mangement
       </Typography>
@@ -269,7 +275,7 @@ return fetch(`${url}/${id}/respond-to-request/${quantity}`, {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={8}>
             <Controls.Input
-              label="Search LiveStock Supplier"
+              label="Search Request"
               fullWidth
               value={Q}
               InputProps={{
@@ -294,39 +300,46 @@ return fetch(`${url}/${id}/respond-to-request/${quantity}`, {
             <TblHead />
             <TableBody>
               {recordsAfterPagingAndSorting().length > 0 ? (
-                recordsAfterPagingAndSorting().map((item,index) => (
+                recordsAfterPagingAndSorting().map((item, index) => (
                   <TableRow key={index}>
                     <TableCell>True</TableCell>
-                    <TableCell>{item.ordered?<span>True</span>:<span>False</span>}</TableCell>
-                    <TableCell>{item.type}</TableCell>
-                    <TableCell>{item.ranchname}</TableCell>
-                          <TableCell>{new Date(item.createdAt).toLocaleString(
-                                "en-US",
-                                { hour12: true }
-                              )}</TableCell>
+                    <TableCell>{item.request_ranchname}</TableCell>
                     <TableCell>
-                     
-                      <span style={{marginTop:"20px"}}>
-                               <Controls.ActionButton
-                        color="primary"
-                        title="View Detile Request"
-                        variant="contained"
-                     onClick={() => {
-                          handelDetailes(item.id)
-                        }}
-                      >
-                        <ViewListIcon fontSize="small" />
-                      </Controls.ActionButton>
+                      {new Date(item.createdAt).toLocaleString('en-US', {
+                        hour12: true,
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      <span style={{ marginTop: '20px' }}>
+                        <Controls.ActionButton
+                          color="primary"
+                          title="View Detile Request"
+                          variant="contained"
+                          onClick={() => {
+                            handelDetailes(item)
+                          }}
+                        >
+                          <ViewListIcon fontSize="small" />
+                        </Controls.ActionButton>
                       </span>
 
                       <Controls.ActionButton
                         color="secondary"
                         title="respond to request"
-                      onClick={() => {
-                          sendResponse(item.id,item.quantity)
+                        onClick={() => {
+                          sendResponse(item)
                         }}
                       >
                         <ReplayIcon fontSize="small" />
+                      </Controls.ActionButton>
+                      <Controls.ActionButton
+                        color="secondary"
+                        title="Select Truck"
+                        onClick={() => {
+                          openTruck(true)
+                        }}
+                      >
+                        <PersonIcon fontSize="small" />
                       </Controls.ActionButton>
                     </TableCell>
                   </TableRow>
@@ -346,42 +359,65 @@ return fetch(`${url}/${id}/respond-to-request/${quantity}`, {
       />
       <Notification notify={notify} setNotify={setNotify} />
       <Popup
-        title="LiveStock Supplier Form"
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
-      >
-        <LiveStockSupplierForm
-          NotifyMessage={NotifyMessage}
-          setOpenPopup={setOpenPopup}
-          recordForEdit={recordForEdit}
-          setRanchManagers={setRanchManagers}
-        />
-        </Popup>
-            <Popup
-        title="LiveStock Form"
-        openPopup={openPopupLiveStock}
-        setOpenPopup={setOpenPopLiveStock}
-      >
-            <LiveStockForm
-          NotifyMessage={NotifyMessage}
-          setOpenPopup={setOpenPopLiveStock}
-          recordForEdit={recordForEdit}
-          setRanchManagers={setRanchManagers}
-          setId={id}
-        />
-      </Popup>
-          <Popup 
         title=" Request  Data"
         openPopup={openRanch}
         setOpenPopup={setOpenRanch}
       >
-        <LiveStockRequest
-        data={newData}
-        />
+        <LiveStockRequest data={newData} />
+      </Popup>
+      <Popup title=" Request  Data" openPopup={truck} setOpenPopup={openTruck}>
+        <Truck setTrickId={setTrickId} />
+      </Popup>
+      <Popup
+        title=" Request  Data"
+        openPopup={quantityForm}
+        setOpenPopup={setQuantityFrom}
+      >
+        <Form onSubmit={handleSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Controls.Input
+                fullWidth
+                label="Type"
+                name="type"
+                value={values.type}
+                onChange={handleInputChange}
+                error={errors.type}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Quantity"
+                name="quantity"
+                type="number"
+                value={values.quantity}
+                onChange={handleInputChange}
+                error={errors.quantity}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controls.Button
+                color="primary"
+                variant="outlined"
+                disabled={values.submitting ? true : false}
+                text={
+                  values.editing === true
+                    ? values.submitting
+                      ? 'Editing...'
+                      : 'Edit'
+                    : values.submitting
+                    ? 'Adding...'
+                    : 'Add'
+                }
+                className="Button"
+                type="submit"
+              />
+            </Grid>
+          </Grid>
+        </Form>
       </Popup>
     </OftadehLayout>
   )
 }
-
 
 export default RanchManager

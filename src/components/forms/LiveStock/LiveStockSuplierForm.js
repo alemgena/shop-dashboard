@@ -80,7 +80,6 @@ const LiveStockSupplierForm = ({
     useForm(initialFValues, true, validate);
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (validate()) {
       setValues({ ...values, submitting: true });
       if (values.editing === false) {

@@ -196,12 +196,12 @@ const history=useHistory()
       .then((response) => {
         setLoading(false)
         console.log(response.data.message)
-        if (response.data.message === 'user already exists!') {
+        if (response.data.message ==='user already exists!') {
           setOpenAlert(true)
           setOpenAlertCon('warning')
           setOpenAlertMess('some one is already register in this account')
         }
-      else  if (response.data.message === 'admin registered successfuly') {
+      else  if (response.data.message ==='admin account registered successfully!') {
           history.push('/adminLogin')
           setOpenAlert(true)
           setOpenAlertMess('You Are Registered Successfully')
@@ -268,7 +268,6 @@ const history=useHistory()
           <Typography className={classes.mb3} variant="h5" component="h1">
             User Form
           </Typography>
-
           <Divider sx={{ fontSize: '32px', width: '50px' }} />
           <TextField
             id="outlined-basic"
@@ -437,7 +436,7 @@ const history=useHistory()
           <div style={{ marginTop: '40px', marginLeft: '10px' }}>
             Is Already Signup{' '}
             <Link
-              to="/login"
+              to="/adminLogin"
               style={{ marginLeft: '10px', textDecoration: 'none' }}
             >
               SignIn

@@ -17,7 +17,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
@@ -97,7 +97,7 @@ const RanchManager = (props) => {
   const [loading, setLoading] = useState(true)
   const [recordForEdit, setRecordForEdit] = useState(null)
   const { NotifyMessage, notify, setNotify } = Notify()
-  const { viewAllRequest,AprroveRequest, deleteRanchManager } = Adminrequest()
+  const { viewAllRequest,AprroveRequest, deleteRequest } = Adminrequest()
   const [ranchManagers, setRanchManagers] = useState([])
   const [filterFn, setFilterFn] = useState({
     fn: (items) => {
@@ -155,13 +155,13 @@ const RanchManager = (props) => {
   }, [Q])
 
 
-  const onDelete = (ranchName) => {
-          console.log(ranchName)
+  const onDelete = (id) => {
+          console.log(id)
     setConfirmDialog({
       ...confirmDialog,
       isOpen: false,
     })
-    deleteRanchManager(ranchName).then((data) => {
+    deleteRequest(id).then((data) => {
 
       if (data.err) {
         NotifyMessage({
@@ -177,7 +177,7 @@ const RanchManager = (props) => {
         setRanchManagers(
           produce(ranchManagers, (draft) => {
             const index = ranchManagers.findIndex(
-              (ranch) => ranch.username === ranchName,
+              (ranch) => ranch.id === id,
             )
             if (index !== -1) draft.splice(index, 1)
           }),
@@ -236,10 +236,10 @@ const handleAprove=(id)=>{
         })
       }
       
-else if(data.message){
+else if(data){
         console.log(data)
         NotifyMessage({
-          message: data.message,
+          message:'request deleted sccessfuly',
           type: 'success',
         })
      let   approve = ranchManagers.findIndex((element) => element.id === id)
@@ -258,7 +258,7 @@ else if(data.message){
         <Grid container spacing={2}>
           <Grid item xs={12} sm={8}>
             <Controls.Input
-              label="Search LiveStock Supplier"
+              label="Search Request"
               fullWidth
               value={Q}
               InputProps={{
@@ -326,7 +326,7 @@ else if(data.message){
                             title: 'Are you sure to delete this product?',
                             subTitle: "You can't undo this operation",
                             onConfirm: () => {
-                              onDelete(item.username)
+                              onDelete(item.id)
                             },
                           })
                         }}

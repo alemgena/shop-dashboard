@@ -145,7 +145,7 @@ function Sign() {
         config,
       )
       .then((response) => {
-        console.log(response)
+        console.log(response.data)
         console.log(user_identifier, password)
         if (response.data.err === 'admin with this username is not found') {
           setLoading(false)
@@ -153,7 +153,7 @@ function Sign() {
           setOpenAlertCon('error')
           setOpenAlertMess('admin with this username is not foundt')
         }
-        if (response.data.message === 'Password is incorrect') {
+        if (response.data.err === 'Password is incorrect!') {
           setLoading(false)
           setOpenAlert(true)
           setOpenAlertCon('error')
@@ -206,111 +206,6 @@ function Sign() {
   console.log(openAlerMess)
   return (
     <div>
-      {md2 ? (
-        <Dialog
-          TransitionComponent={Transition}
-          aria-labelledby="simple-dialog-title"
-          open={open}
-          scroll="paper"
-          PaperProps={{ sx: { width: '80%', height: '75%' } }}
-        >
-          <DialogContent>
-            <DialogContentText
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <img
-                style={{ maxWidth: '100%', height: '70px' }}
-                src={`https://api.rcndc.com/images/logo.png`}
-                alt="image"
-              />
-            </DialogContentText>
-            <DialogContentText id="alert-dialog-description">
-              Login
-            </DialogContentText>
-            <DialogContentText id="alert-dialog-description">
-              Sign Into Your Account
-            </DialogContentText>
-            <DialogContentText style={{ marginTop: '10px' }}>
-              <TextField
-                InputLabelProps={{
-                  style: { color: '#203040' },
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <PersonIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                fullWidth
-                className={classes.borderTextField}
-                required
-                id="outlined-required"
-                label="Email or UserName"
-                value={user_identifier}
-                onChange={(e) => {
-                  dispatch(loginActions.setUser_Identifier(e.target.value))
-                }}
-                helperText={user_IdentifierErr}
-              />
-              <TextField
-                fullWidth
-                className={classes.borderTextField}
-                style={{ marginTop: '30px' }}
-                required
-                id="outlined-required"
-                label="Password"
-                InputLabelProps={{
-                  style: { color: '#203040' },
-                }}
-                value={password}
-                onChange={(e) => {
-                  dispatch(loginActions.setPassword(e.target.value))
-                }}
-                helperText={passwordErr}
-                type={showPassword ? 'text' : 'password'}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LockIcon style={{ color: '#203040' }}></LockIcon>
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {showPassword ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </DialogContentText>
-            <DialogContentText
-              style={{ marginTop: '20px' }}
-              id="alert-dialog-description"
-            >
-              <Button
-                onClick={(event) => validate(event)}
-                style={{ backgroundColor: '#203040', color: 'white' }}
-              >
-                Login
-              </Button>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions style={{ marginBottom: '40px' }}></DialogActions>
-        </Dialog>
-      ) : (
         <Dialog
           fullWidth
           TransitionComponent={Transition}
@@ -458,8 +353,6 @@ function Sign() {
             </Button>
           </DialogActions>
         </Dialog>
-      )}
-
       <Dialog
         classes={{
           paper: classes.forgetPassword,

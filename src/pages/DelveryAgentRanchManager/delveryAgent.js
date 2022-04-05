@@ -17,12 +17,12 @@ import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
-import DeliveryAgentApiRequest from '../posts/ranchMangment/request/deliveryAgentRequest'
-import DeliveryAgentForm from '../../components/forms/DeliveryAgent/DeliveryAgent'
+import DeliveryAgentApiRequest from '../posts/ranchMangment/request/ranchManagerDeliveryAgent'
+import DeliveryAgentForm from '../../components/forms/DelveryAgentRanchManger/DeliveryAgent'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,9 +84,9 @@ const headCells = [
 const RanchManager = (props) => {
   const { history } = props
   const classes = useStyles()
-  const [openPopup, setOpenPopup] = useState(true)
+  const [openPopup, setOpenPopup] = useState(false)
   const [Q, setQ] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [recordForEdit, setRecordForEdit] = useState(null)
   const { NotifyMessage, notify, setNotify } = Notify()
   const {viewAllDeliveryAgent, deleteDeliveryAgent   } = DeliveryAgentApiRequest()
@@ -189,7 +189,7 @@ console.log(deliveryAgent)
   return (
     <OftadehLayout>
       <Typography className={classes.mb3} variant="h5" component="h1">
-        Ranch Mangement
+        Deliver Agent Mangement
       </Typography>
       <OftadehBreadcrumbs path={history} />
       <Toolbar>

@@ -20,6 +20,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useHistory } from 'react-router';
 import { loginSlice } from '../../slice/login'
 import { useDispatch, useSelector } from 'react-redux'
+import { Box, Button, Popover } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 const useStyles = makeStyles((theme) => ({
   appBar: {
     transition: theme.transitions.create(["margin", "width"], {
@@ -106,6 +108,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OftadehAppBar = (props) => {
+    const [anchorEl, setAnchorEl] = React.useState(null);
   const classes = useStyles(props);
   const { open, handleDrawerToggle, handleRightPanelOpen } = React.useContext(
     NavigationContext
@@ -122,20 +125,32 @@ const OftadehAppBar = (props) => {
     if(role==='admin'){
      navgate.push('/adminLogin')
     }
-    else{
+
+    else if(role==='ranchManager'){
            navgate.push('/ranchManagerLogin')
     }
+      else if(role==='inspector'){
+  navgate.push(
+        "/inspectorLogin")
+  }
         localStorage.removeItem('token')
     localStorage.removeItem('user_id')
     localStorage.removeItem('loginInfo')
     localStorage.removeItem('userInfo')
-  
+    localStorage.removeItem('role')
     dispatch(loginActions.setLoggedUser([]))
     //dispatch(loginActions.initialState(''));
 
     dispatch(loginActions.setUserInformation([]))
    
   }
+    const handleClose = () => {
+    setAnchorEl(null);
+  };
+    const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+ 
   return (
     <AppBar
       position="fixed"
@@ -156,12 +171,58 @@ const OftadehAppBar = (props) => {
   
         <div className={classes.grow} />
         <div className={classes.appbarSection}>
-       <IconButton    
-               >< LogoutIcon  onClick={LoginOut}
-             className={classes.accountCircle}
-             >
-             </LogoutIcon>
-             </IconButton>
+     
+     <Button
+        color="inherit"
+        onClick={handleClick}
+        className="text-capitalize px-3 text-left btn-inverse d-flex align-items-center"
+      >
+        <Box>
+          <AccountCircleIcon />
+        </Box>
+
+        <span className="pl-1 pl-xl-3">
+          {/* <FontAwesomeIcon icon={["fas", "angle-down"]} className="opacity-5" /> */}
+        </span>
+      </Button>
+      <Popover
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        onClose={handleClose}
+        // className="ml-2"
+      >
+        {/* <div className="dropdown-menu-right dropdown-menu-lg overflow-hidden p-0">
+          <List className="text-left bg-transparent d-flex align-items-center flex-column pt-0">
+            <Divider className="w-100 mt-2" />
+            <ListItem button>My Account</ListItem>
+            <ListItem button>Profile settings</ListItem>
+
+            <Divider className="w-100" />
+          </List>
+        </div> */}
+        <Button
+          variant="conatined"
+        
+             style={{
+              backgroundColor: '#203040',
+            //  width: '70px',
+              color: 'white',
+            }}
+          onClick={LoginOut}
+          //className="text-capitalize px-3 py-2 text-left btn-inverse d-flex align-items-center  "
+        >
+          Logout
+          <LogoutIcon  />
+        </Button>
+      </Popover>
          </div>
       </Toolbar>
     </AppBar>

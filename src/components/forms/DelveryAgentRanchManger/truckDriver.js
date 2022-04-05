@@ -3,7 +3,7 @@ import React from 'react'
 import { Form, useForm } from '../../ui/useForm'
 import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
-import RanchManagerApiRequests from '../../../pages/posts/ranchMangment/request/requestRanchManager'
+import RanchManagerApiRequests from '../../../pages/posts/ranchMangment/request/ranchManagerTruckDriver'
 import RanchApiRequests from '../../../pages/posts/ranchMangment/request/requestRanch'
 import produce from 'immer'
 const initialFValues = {
@@ -12,7 +12,6 @@ const initialFValues = {
   email: '',
   sex: '',
   password: '',
-
   username: '',
   phoneNo: '',
   role: 'truck_driver',
@@ -34,7 +33,7 @@ const RanchManagerForm = ({
   }, [recordForEdit])
   const [ranchs, setRanchs] = useState([])
 
-  const { addUser, updateRanch } = RanchManagerApiRequests()
+  const { addDrive, updateRanch } = RanchManagerApiRequests()
   const validate = (fieldValues = values) => {
     const temp = { ...errors }
     const regexEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
@@ -91,7 +90,7 @@ const RanchManagerForm = ({
       setValues({ ...values, submitting: true })
       if (values.editing === false) {
         console.log(values)
-        addUser(values).then((data) => {
+        addDrive(values).then((data) => {
           console.log(data)
           if (data.err) {
             setValues({ ...values, submitting: false })

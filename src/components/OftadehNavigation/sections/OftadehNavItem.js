@@ -37,7 +37,7 @@ const OftadehNavItem = props => {
           <Icon>{item.icon}</Icon>
         </ListItemIcon>
       )}
-      <ListItemText primary={item.title} />
+      <ListItemText  fontWeight='fontWeightMedium' primary={item.title} />
       {item.badge && <OftadehNavBadge className="mr-4" badge={item.badge} />}
     </ListItem>
   );

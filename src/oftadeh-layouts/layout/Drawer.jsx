@@ -31,7 +31,7 @@ const OftadehDrawer = (props) => {
       anchor="left"
       open={open}
         PaperProps={{
-    sx: { width: "90%" },
+    sx: { width: "95%" },
   }}
       classes={{
         paper: classes.drawerPaper,

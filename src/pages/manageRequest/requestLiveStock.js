@@ -80,7 +80,7 @@ totalPrice: "75"
                   <StyledTableCell>Quantity</StyledTableCell>
                   <StyledTableCell>Weight</StyledTableCell>
                   <StyledTableCell>Type</StyledTableCell>
-                  <StyledTableCell>Action</StyledTableCell>
+            
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -91,7 +91,6 @@ totalPrice: "75"
                   <StyledTableCell>{liveStock.quantity}</StyledTableCell>
                   <StyledTableCell>{liveStock.weight} Kg</StyledTableCell>
                   <StyledTableCell>{liveStock.type}</StyledTableCell>
-                  <StyledTableCell></StyledTableCell>
                 </StyledTableRow>
               </TableBody>
             </Table>
@@ -110,7 +109,6 @@ totalPrice: "75"
                   <StyledTableCell>Origin</StyledTableCell>
                   <StyledTableCell>TotalPrice</StyledTableCell>
       <StyledTableCell>PhoneNo</StyledTableCell>
-                  <StyledTableCell>Action</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -122,7 +120,6 @@ totalPrice: "75"
                   <StyledTableCell>{order.origin}</StyledTableCell>
                   <StyledTableCell>{order.totalPrice}</StyledTableCell>
                        <StyledTableCell>{order.phoneNo}</StyledTableCell>  
-                  <StyledTableCell></StyledTableCell>
                 </StyledTableRow>
               </TableBody>
             </Table>

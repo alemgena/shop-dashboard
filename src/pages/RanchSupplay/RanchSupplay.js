@@ -17,7 +17,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
@@ -129,12 +129,10 @@ console.log(liveStock)
     setFilterFn({
       fn: (items) => {
         const columns = [
-          'type',
-          'breed',
-          'tagNo',
-          'weight',
-          'age',
-          'residential',
+          'name',
+          'area',
+          'location',
+          'distance',
         ]
 
         if (Q === '') return items
@@ -200,7 +198,7 @@ console.log(liveStock)
         <Grid container spacing={2}>
           <Grid item xs={12} sm={8}>
             <Controls.Input
-              label="Search Ranch Manager"
+              label="Search ranch supplay"
               fullWidth
               value={Q}
               InputProps={{

@@ -1,6 +1,6 @@
 import React from "react";
-import OftadehAppBar from "../../components/OftadehAppBar/OftadehAppBar";
+import AppBar from "../../components/AppBar/AppBar";
 
-const Header = () => <OftadehAppBar drawerWidth={240} />;
+const Header = () => <AppBar drawerWidth={240} />;
 
 export default Header;

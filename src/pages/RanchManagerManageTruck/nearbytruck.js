@@ -18,7 +18,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
@@ -82,11 +82,12 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const headCells = [
-  { id: 'approved', label: 'Approved' },
-  { id: 'ordered', label: 'Ordered' },
-  { id: 'type', label: 'Type' },
-  { id: 'ranchname', label: 'Ranch' },
-  { id: 'createdAt', label: 'CreatedAt' },
+  { id: 'capacity', label: 'Capacity' },
+  { id: 'cargo', label: 'Cargo' },
+  { id: 'location', label: 'Current Location' },
+  { id: 'licencePlate', label: 'Licence Plate' },
+  { id: 'onduty', label: 'ON Duty' },
+  { id: 'onduty', label: 'CreatedAt' },
   { id: 'actions', label: 'Actions', disableSorting: true },
 ]
 
@@ -113,38 +114,20 @@ const RanchManager = (props) => {
     subTitle: '',
   })
   const [ranch, setRanch] = useState()
-  useEffect(()=>{
-  viewAllTruck().then((data) => {
-      console.log(data)
-      if (data.err) {
-        NotifyMessage({
-          message: data.err,
-          type: 'error',
-        })
-      } else if (data.supplies) {
-        // console.log(data)
-        setLoading(false)
-        data.supplies.forEach((el) => {
-        setRanch(el.name)
-      }
-    )
-  }
-})
-  },[])
   console.log(ranch)
   useEffect(() => {
     console.log('the ranch that is send to the server',ranch)
-    viewAllRequest().then((data) => {
+    viewAllTruck().then((data) => {
       console.log(data)
       if (data.err) {
         NotifyMessage({
           message: data.err,
           type: 'error',
         })
-      } else if (data.requests) {
+      } else if (data.nearbyTrucks) {
         console.log(data)
         setLoading(false)
-        setRanchManagers(data.requests)
+        setRanchManagers(data.nearbyTrucks)
       }
     })
   }, [])
@@ -296,32 +279,22 @@ return fetch(`${url}/${id}/respond-to-request/${quantity}`, {
               {recordsAfterPagingAndSorting().length > 0 ? (
                 recordsAfterPagingAndSorting().map((item,index) => (
                   <TableRow key={index}>
-                    <TableCell>True</TableCell>
-                    <TableCell>{item.ordered?<span>True</span>:<span>False</span>}</TableCell>
-                    <TableCell>{item.type}</TableCell>
-                    <TableCell>{item.ranchname}</TableCell>
+                    <TableCell>{item.capacity}</TableCell>
+                    <TableCell>{item.cargo}</TableCell>
+                    <TableCell>{item.currentLocation}</TableCell>
+                    <TableCell>{item.licencePlate}</TableCell>
+                     <TableCell>{item.onduty?<span>True</span>:<span>false</span>}</TableCell>
                           <TableCell>{new Date(item.createdAt).toLocaleString(
                                 "en-US",
                                 { hour12: true }
                               )}</TableCell>
                     <TableCell>
                      
-                      <span style={{marginTop:"20px"}}>
-                               <Controls.ActionButton
-                        color="primary"
-                        title="View Detile Request"
-                        variant="contained"
-                     onClick={() => {
-                          handelDetailes(item.id)
-                        }}
-                      >
-                        <ViewListIcon fontSize="small" />
-                      </Controls.ActionButton>
-                      </span>
+
 
                       <Controls.ActionButton
                         color="secondary"
-                        title="respond to request"
+                        title="Start Delivery"
                       onClick={() => {
                           sendResponse(item.id,item.quantity)
                         }}

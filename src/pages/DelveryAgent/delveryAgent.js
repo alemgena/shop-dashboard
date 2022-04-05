@@ -17,7 +17,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
@@ -84,9 +84,9 @@ const headCells = [
 const RanchManager = (props) => {
   const { history } = props
   const classes = useStyles()
-  const [openPopup, setOpenPopup] = useState(true)
+  const [openPopup, setOpenPopup] = useState(false)
   const [Q, setQ] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [recordForEdit, setRecordForEdit] = useState(null)
   const { NotifyMessage, notify, setNotify } = Notify()
   const {viewAllDeliveryAgent, deleteDeliveryAgent   } = DeliveryAgentApiRequest()

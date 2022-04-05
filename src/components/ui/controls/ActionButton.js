@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ActionButton(props) {
-  const { color, children, onClick, title = "add", variant } = props;
+  const { color,disabled, size,children, onClick, title = "add", variant } = props;
 
   const classes = useStyles();
 
@@ -52,6 +52,8 @@ export default function ActionButton(props) {
         variant={variant || "outlined"}
         className={`${classes.root} `}
         onClick={onClick}
+        size={size}
+        disabled={disabled}
       >
         {children}
       </Button>

@@ -17,7 +17,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import produce from 'immer'
 import PageSpinner from '../../components/ui/PageSpinner'
 //import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from  '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
@@ -28,6 +28,7 @@ import LiveStockForm from '../../components/forms/LiveStock/LIveStock'
 import axios from 'axios'
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ViewLiveStock from './recover'
+import Vacciennn from './liveStockVaccien'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -82,7 +83,6 @@ const headCells = [
   { id: 'lastName', label: 'Last Name' },
   { id: 'username', label: 'Username' },
   { id: 'ranch', label: 'Ranch' },
-    { id: 'quantity', label: 'Quantity' },
   { id: 'actions', label: 'Actions', disableSorting: true },
 ]
 
@@ -117,10 +117,6 @@ const RanchManager = (props) => {
           type: 'error',
         })
       } else if (data.livestockSuppliers) {
-           NotifyMessage({
-          message: data.msg,
-          type: 'success',
-        })
         setLoading(false)
         setRanchManagers(data.livestockSuppliers)
       }
@@ -140,7 +136,7 @@ const RanchManager = (props) => {
         const columns = [
           'firstName',
           'lastName',
-'location',
+          'location',
           'ranch',
         ]
 
@@ -157,13 +153,13 @@ const RanchManager = (props) => {
   }, [Q])
 
 
-  const onDelete = (ranchName) => {
-          console.log(ranchName)
+  const onDelete = (id) => {
+  
     setConfirmDialog({
       ...confirmDialog,
       isOpen: false,
     })
-    deleteRanchManager(ranchName).then((data) => {
+    deleteRanchManager(id).then((data) => {
 
       if (data.err) {
         NotifyMessage({
@@ -173,13 +169,13 @@ const RanchManager = (props) => {
       } else {
         console.log(data)
         NotifyMessage({
-          message: data.msg,
+          message: "LiveStockSuplier Deleted",
           type: 'success',
         })
         setRanchManagers(
           produce(ranchManagers, (draft) => {
             const index = ranchManagers.findIndex(
-              (ranch) => ranch.username === ranchName,
+              (ranch) => ranch.id === id,
             )
             if (index !== -1) draft.splice(index, 1)
           }),
@@ -189,9 +185,10 @@ const RanchManager = (props) => {
   }
   const[openView,setOpenView]=useState(false);
   const[viewDataa,setViewDataa]=useState([])
+    const[openVaccien,setVaccienOpen]=useState(false);
+    const[vaccien,setVaccien]=useState([])
 const openViewLiveStock=(item)=>{
   setOpenView(true);
-
   setViewDataa(item)
 }
   const openInPopup = (item) => {
@@ -199,15 +196,11 @@ const openViewLiveStock=(item)=>{
     setOpenPopup(true)
   }
   const [id,setId]=useState('')
+ const  vaccineDetaile=(item)=>{
+setVaccienOpen(true)
+setVaccien(item)
+ }
    const openInLiveStock=(id)=>{
-          let token = localStorage.getItem('token')
-     axios.get(`${url}/ranch-manager-livestocksupplier-livestock-quantity/${id}`,{ headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-      }}).then((response=>{
-       console.log(response.data.livestockSupplierQuantity)
-     }))
    setOpenPopLiveStock(true);
 setId(id);
    }
@@ -264,9 +257,6 @@ setId(id);
                     <TableCell>{item.lastName}</TableCell>
                     <TableCell>{item.username}</TableCell>
                              <TableCell>{item.ranchname}</TableCell>
-                          <TableCell>{item.quantity}</TableCell>
-           
-
                     <TableCell>
                       <Controls.ActionButton
                         color="primary"
@@ -287,7 +277,7 @@ setId(id);
                             title: 'Are you sure to delete this product?',
                             subTitle: "You can't undo this operation",
                             onConfirm: () => {
-                              onDelete(item.username)
+                              onDelete(item.id)
                             },
                           })
                         }}
@@ -313,6 +303,18 @@ setId(id);
                         variant="contained"
                         onClick={() => {
                           openViewLiveStock(item.id)
+                        }}
+                      >
+                        <ViewListIcon fontSize="small" />
+                      </Controls.ActionButton>
+                      </span>
+                               <span style={{marginTop:"20px"}}>
+                               <Controls.ActionButton
+                        color="primary"
+                        title="View Vaccination"
+                        variant="contained"
+                        onClick={() => {
+                          vaccineDetaile(item.id)
                         }}
                       >
                         <ViewListIcon fontSize="small" />
@@ -367,6 +369,15 @@ setId(id);
       >
             <ViewLiveStock
       id={viewDataa}
+        />
+      </Popup>
+        <Popup
+        title="Vaccienation"
+        openPopup={openVaccien}
+        setOpenPopup={setVaccienOpen}
+      >
+            <Vacciennn
+      id={vaccien}
         />
       </Popup>
     </OftadehLayout>

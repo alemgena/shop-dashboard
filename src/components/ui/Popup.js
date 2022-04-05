@@ -32,6 +32,7 @@ export default function Popup(props) {
     openPopup,
     setOpenPopup,
     maxWidth = "md",
+       minWidth = "md",
     scroll = "paper",
   } = props;
   const classes = useStyles();
@@ -41,6 +42,7 @@ export default function Popup(props) {
       open={openPopup}
       TransitionComponent={Transition}
       maxWidth={maxWidth}
+      minWidth={minWidth}
       onClose={() => setOpenPopup(false)}
       classes={{ paper: classes.dialogWrapper }}
     >

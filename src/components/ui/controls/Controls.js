@@ -8,6 +8,7 @@ import AutoCompleteDate from './AutoCompletDate'
 import AutoCompleteDriver from "./AutoCompletDriver";
 import AutoCompleteAgent from "./AutoCompletAgent";
 import AutoCompletRanch from './AutoCopmletRanch'
+import AutoCompleteInspector from "./AutoComletInspector";
 const Controls = {
   Input,
   RadioGroup,
@@ -18,7 +19,8 @@ const Controls = {
   AutoCompleteDate,
   AutoCompleteDriver,
   AutoCompleteAgent,
-  AutoCompletRanch
+  AutoCompletRanch,
+  AutoCompleteInspector
 };
 
 export default Controls;

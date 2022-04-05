@@ -3,7 +3,7 @@ import React from 'react'
 import { Form, useForm } from '../../ui/useForm'
 import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
-import DeliveryAgentApiRequest from '../../../pages/posts/ranchMangment/request/deliveryAgentRequest'
+import DeliveryAgentApiRequest from '../../../pages/posts/ranchMangment/request/ranchManagerDeliveryAgent'
 import produce from 'immer'
 const initialFValues = {
   firstName: '',

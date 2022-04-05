@@ -147,11 +147,11 @@ function Sign() {
       .then((response) => {
         console.log(response)
         console.log(user_identifier, password)
-        if (response.data.err === 'user with this alemgena is not found') {
+        if (response.data.message ==='user not found, register first prior to signIn!') {
           setLoading(false)
           setOpenAlert(true)
           setOpenAlertCon('error')
-          setOpenAlertMess('admin with this username is not foundt')
+          setOpenAlertMess('user with this username is not found')
         }
         if (response.data.err === 'Password is incorrect') {
           setLoading(false)
@@ -169,7 +169,7 @@ function Sign() {
           dispatch(loginActions.setLoggedUser(response.data))
           dispatch(loginActions.setUserInformation(response.data))
           if (response.data.user.role === 'ranchManager') {
-            navgate.push(`/`)
+            navgate.push(`/liveStockSuppplier`)
           }
         }
       })

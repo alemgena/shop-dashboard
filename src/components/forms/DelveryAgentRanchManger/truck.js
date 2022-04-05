@@ -3,12 +3,12 @@ import React from 'react'
 import { Form, useForm } from '../../ui/useForm'
 import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
-import TruckApiRequest from '../../../pages/posts/ranchMangment/request/truckRequest'
+import TruckApiRequest from '../../../pages/posts/ranchMangment/request/ranchManagerTruck'
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import produce from 'immer'
-import DeliveryAgentApiRequest from '../../../pages/posts/ranchMangment/request/deliveryAgentRequest'
-import DriverApiRequests from '../../../pages/posts/ranchMangment/request/requestRanchManager'
+import DeliveryAgentApiRequest from '../../../pages/posts/ranchMangment/request/ranchManagerDeliveryAgent'
+import DriverApiRequests from '../../../pages/posts/ranchMangment/request/ranchManagerTruckDriver'
 const options = ['Option 1', 'Option 2']
 const initialFValues = {
    licencePlate:' ',
@@ -34,11 +34,10 @@ const TruckForm = ({
   const [ranchs, setDriver] = useState([])
     const [deliverAgents, setDeliveryAgent] = useState([])
 
-const{viewUseByRole}=DriverApiRequests();
-const route='truck_driver'
+const{viewAllDriver}=DriverApiRequests();
     const {viewAllDeliveryAgent} = DeliveryAgentApiRequest()
       useEffect(() => {
-    viewUseByRole(route).then((data) => {
+    viewAllDriver().then((data) => {
       console.log(data)
       if (data.err) {
         NotifyMessage({

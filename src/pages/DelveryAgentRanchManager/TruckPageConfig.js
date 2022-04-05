@@ -3,7 +3,7 @@ import Truck from "./truck";
 export const TruckPage = {
   routes: [
     {
-      path: "/deliverytruck",
+      path: "/truck",
       exact: true,
       component: Truck
     }

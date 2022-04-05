@@ -21,12 +21,32 @@ import { DeliveryAgentPageConfig } from "../pages/DelveryAgent/DeliveryAgentPage
 import { TruckPageConfig } from "../pages/DelveryAgent/TruckPageConfig";
 import { DeliveryAgentPage } from "../pages/DelveryAgentRanchManager/DeliveryAgentPageConfig";
 import { TruckPage } from "../pages/DelveryAgentRanchManager/TruckPageConfig";
+import { TruckDriverPage } from "../pages/DelveryAgentRanchManager/TruckDriverPageConfig";
 import { RequestPageConfig } from "../pages/manageRequest/RequestPageConfig";
 import {RanchManagerRequestPageConfig} from '../pages/RanchManagerRequest/requestPageConfig'
 import {NearByTruckPageConfig} from '../pages/RanchManagerManageTruck/NearbyTruckPageConfig'
+import {SampleTable} from '../pages/auth/login/SampleConfig'
+import {InspectorPage} from '../pages/Inspectors/inspectorsPageConfig'
+import {GovermentOfficePage} from '../pages/GovermentOffice/GovermentOfficePageCOnfig'
+import {InspectorLogin} from '../pages/auth/login/inspectorLogin/inspectorLoginPage'
+import {AllRanchPage} from '../pages/InspectorRoutes/AllRanchPage'
+import {AllVaccienPage} from '../pages/InspectorRoutes/AllVaccien/vaccienPage'
+import {AllMedicPage} from '../pages/InspectorRoutes/AllMedicen/medicenPage'
+import {AllProtienPage} from '../pages/InspectorRoutes/AllProtien/protienPage'
+import {AllLiveStockePage} from '../pages/InspectorRoutes/AllLiveStock/liveStockPage'
 const routeConfigs = [
+  ...AllLiveStockePage.routes,
+  ...AllProtienPage.routes,
+  ...AllMedicPage.routes,
+  ...AllVaccienPage.routes,
+  ...AllRanchPage.routes,
+  ...InspectorLogin.routes,
+  ...InspectorPage.routes,
+  ...SampleTable.routes,
+  ...GovermentOfficePage.routes,
   ...DeliveryAgentPage.routes,
   ...TruckPage.routes,
+  ...TruckDriverPage.routes,
   ...TruckDriverPageConfig.routes,
   ...NearByTruckPageConfig.routes,
   ...RanchManagerRequestPageConfig.routes,

@@ -42,6 +42,7 @@ export default function RanchSupplayDetail(props) {
     const[protien,setProtien]=React.useState([]);
       const[medicen,setMedicen]=React.useState([]);
         const[vaccien,setVaccien]=React.useState([]);
+        console.log(props.data)
   React.useEffect(() => {
     setRanch(props.data)
       props.data.forEach((el)=>{
@@ -51,14 +52,14 @@ export default function RanchSupplayDetail(props) {
     setProtien(el.protien) 
 })
     props.data.forEach((el)=>{
-    setVaccien(el.vaccien) 
+    setVaccien(el.vaccines) 
 })
     props.data.forEach((el)=>{
     setMedicen(el.medicen) 
 })
   }, [])
   console.log(food)
-console.log(ranch)
+console.log(vaccien)
 /*
 ExpirationDate: "2/3/2022"
 createdAt: "2022-03-24T09:29:59.000Z"
@@ -128,7 +129,7 @@ source: "jmain"
           </TableRow>
         </TableHead>
         <TableBody>
-          {food.map((row) => (
+          {vaccien.map((row) => (
             <StyledTableRow key={row.deliveryStatus}>
               <StyledTableCell >{row.deliveryStatus}</StyledTableCell>
               <StyledTableCell >{row.quantity}</StyledTableCell>

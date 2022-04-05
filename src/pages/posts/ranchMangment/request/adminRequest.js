@@ -39,8 +39,8 @@ const LiveStockApiRequests = () => {
       })
       .catch((err) => err);
   };
-  const deleteLiveStock = (username) => {
-    return fetch(`${url}/admin-delete-user/${username}`, {
+  const deleteRequest = (id) => {
+    return fetch(`${url}/admin-delete-request/${id}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -89,7 +89,7 @@ const LiveStockApiRequests = () => {
     addLiveStock,
    viewAllRequest ,
    AprroveRequest,
-    deleteLiveStock,
+    deleteRequest,
     updateLiveStock,
   };
 };

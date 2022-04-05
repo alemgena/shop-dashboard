@@ -2,6 +2,7 @@
 import PersonIcon from '@mui/icons-material/Person';
 import React from 'react'
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 const navigationConfig = [
   {
     id: "Main",
@@ -12,24 +13,16 @@ const navigationConfig = [
         id: "dashboard",
         title: "Dashboard",
         type: "item",
-        icon: "apps",
+        icon: <FormatAlignLeftIcon/>,
         url: "/",
         exact: true,
       },
-      {
-       id: "user",
-        title: "User",
-        type: "item",
-        icon: <PersonIcon/>,
-        url: "/user",
-        exact: true,
-      },
-      
-      {
+   
+            {
         id: "main rance",
         title: "Manage Ranch",
         type: "collapse",
-        icon: <AgricultureIcon/>,
+        icon: <FormatAlignLeftIcon/>,
        
         children: [
           {
@@ -52,7 +45,7 @@ const navigationConfig = [
         id: "main deliveryAgent",
         title: "Manage Delivery Agent",
         type: "collapse",
-        icon: <AgricultureIcon/>,
+        icon: <FormatAlignLeftIcon/>,
         children: [
           {
             id: "deliveryAgent",
@@ -81,7 +74,7 @@ const navigationConfig = [
         id: "main liveStock",
         title: "Manage LiveStock",
         type: "collapse",
-        icon: <AgricultureIcon/>,
+        icon: <FormatAlignLeftIcon/>,
        
         children: [
           {
@@ -104,10 +97,26 @@ const navigationConfig = [
        id: "request",
         title: "Manage Request",
         type: "item",
-        icon: <PersonIcon/>,
+        icon: <FormatAlignLeftIcon/>,
         url: "/request",
         exact: true,
-      },``
+      },
+                {
+       id: "office",
+        title: "Manage Goverment Office",
+        type: "item",
+        icon: <FormatAlignLeftIcon/>,
+        url: "/givermentOffice",
+        exact: true,
+      },
+                   {
+       id: "inspector",
+        title: "Manage Inspectors",
+        type: "item",
+        icon: <FormatAlignLeftIcon/>,
+        url: "/insepectors",
+        exact: true,
+      },
     ],
   },
   {

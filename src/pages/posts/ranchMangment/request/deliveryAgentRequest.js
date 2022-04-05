@@ -38,8 +38,8 @@ const DeliveryAgentApiRequest = () => {
       })
       .catch((err) => err);
   };
-  const deleteDeliveryAgent = (username) => {
-    return fetch(`${url}/admin-delete-deliveryAgent`, {
+  const deleteDeliveryAgent = (id) => {
+    return fetch(`${url}/admin-delete-deliveryAgent/${id}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -53,15 +53,15 @@ const DeliveryAgentApiRequest = () => {
       })
       .catch((err) => err);
   };
-  const updateDeliveryAgent = (ranch, username) => {
-    return fetch(`${url}/admin-update-deliveryAgent`, {
+  const updateDeliveryAgent = (data,id) => {
+    return fetch(`${url}/admin-update-deliveryAgent/${id}`, {
       method: "PATCH",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(ranch),
+      body: JSON.stringify(data),
     })
       .then((response) => {
         userSessionExpired(response, navigate);

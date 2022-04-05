@@ -23,7 +23,7 @@ import AddIcon from '@mui/icons-material/Add'
 // import { Editor } from "react-draft-wysiwyg";
 // import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import TableHead from '@mui/material/TableHead'
-import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../components/Layout/Layout'
 import OftadehBreadcrumbs from '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { Typography, makeStyles, TextField } from '@material-ui/core'
 //import AddPostRightPanels from '../../../components/extra/AddPostRightPanels/AddPostRightPanels'

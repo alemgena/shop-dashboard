@@ -1,16 +1,33 @@
 
 import fetch from "isomorphic-fetch";
 import { url } from '../../../../utiles/config'
-    let token = localStorage.getItem('token')
+    let role =localStorage.getItem('role')
 export const userSessionExpired = (error, navigate) => {
   
   if (error.status === 401) {
+
     signout(async () => {
+      if(role==='admin'){
       navigate.push(
         "/adminLogin",
         { state: { msg: "Your session is expired. please signin." } },
         { replace: true }
       );
+      }
+       if(role==='ranchManager'){
+  navigate.push(
+        "/ranchManagerLogin",
+        { state: { msg: "Your session is expired. please signin." } },
+        { replace: true }
+      );
+      }
+  else if(role==='inspector'){
+  navigate.push(
+        "/inspectorLogin",
+        { state: { msg: "Your session is expired. please signin." } },
+        { replace: true }
+      );
+      }
 
       // navigate("/login", { replace: true });
     });

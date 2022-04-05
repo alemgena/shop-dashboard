@@ -19,7 +19,7 @@ import RanchForm from '../../../components/forms/Ranch/RanchForm'
 import RanchApiRequests from './request/requestRanch'
 import produce from 'immer'
 import PageSpinner from '../../../components/ui/PageSpinner'
-import OftadehLayout from '../../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from '../../../components/Layout/Layout'
 import OftadehBreadcrumbs from '../../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
 import { makeStyles, TextField } from '@material-ui/core'
 import { Button } from '@mui/material'
@@ -78,14 +78,11 @@ const useStyles = makeStyles((theme) => ({
 const headCells = [
   { id: 'firstName', label: 'First Name' },
   { id: 'lastName', label: 'Last Name' },
-  { id: 'email', label: 'Email' },
   { id: 'phoneNo', label: 'Phone Number' },
   { id: 'username', label: 'Username' },
   { id: 'password', label: 'Password' },
-
   { id: 'actions', label: 'Actions', disableSorting: true },
 ]
-
 const RanchManager = (props) => {
   const { history } = props
   const classes = useStyles()
@@ -235,7 +232,7 @@ console.log(data)
              <TableRow key={item.id}>
                     <TableCell>{item.firstName}</TableCell>
                     <TableCell>{item.lastName}</TableCell>
-                    <TableCell>{item.email}</TableCell>
+               
                     <TableCell>{item.phoneNo}</TableCell>
                     <TableCell>{item.username}</TableCell>
                       <TableCell>{item.pass}</TableCell>
@@ -244,6 +241,7 @@ console.log(data)
                       <Controls.ActionButton
                         color="primary"
                         title="Update"
+                       size='small'
                         variant="contained"
                         onClick={() => {
                           openInPopup(item)
@@ -254,6 +252,7 @@ console.log(data)
                       <Controls.ActionButton
                         color="secondary"
                         title="Delete"
+                        size='small'
                         onClick={() => {
                           setConfirmDialog({
                             isOpen: true,

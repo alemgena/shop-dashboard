@@ -5,8 +5,18 @@ import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
 import RanchSupplayApiRequests from "../../../pages/posts/ranchMangment/request/ranchSupplay"
 import RanchApiRequests from '../../../pages/posts/ranchMangment/request/requestRanch'
-
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
+import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
 import produce from 'immer'
+//import AdapterDateFns from '@mui/lab/AdapterDateFns';
+//import LocalizationProvider from '@mui/lab/LocalizationProvider';
+//import TimePicker from '@mui/lab/TimePicker';
+//import DateTimePicker from '@mui/lab/DateTimePicker';
+//import DesktopDatePicker from '@mui/lab/DesktopDatePicker';//
+//import MobileDatePicker from '@mui/lab/MobileDatePicker';
 const initialFValues = {
   name: '',
   quantity: '',
@@ -115,15 +125,35 @@ const RanchManagerForm = ({
             setValues({ ...values, submitting: false })
     
           } else {
-       
-            setOpenPopup(false)
+            setOpen(true)
             resetForm()
           }
         })
        
     }
   }
+    const [open, setOpen] = React.useState(false);
   return (
+    <div>
+        <Collapse in={open}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+       Vaccine Added
+        </Alert>
+      </Collapse>
     <Form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
@@ -219,6 +249,7 @@ const RanchManagerForm = ({
         </Grid>
       </Grid>
     </Form>
+    </div>
   )
 }
 export default RanchManagerForm

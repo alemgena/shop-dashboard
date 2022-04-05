@@ -13,7 +13,7 @@ import OftadehNavItem from './sections/OftadehNavItem'
 import OftadehNavLink from './sections/OftadehNavLink'
 import { Typography } from '@material-ui/core'
 import clsx from 'clsx'
-
+import inpectorNaviegationConfig from '../../oftadeh-configs/inspectorNavigationCOnfig'
 const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
 
@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
   },
   navCustom: {
     '& .MuiTypography-root': {
-      fontSize: '.85rem',
+      fontSize: '.95rem',
+      marginLeft:"10px"
     },
     '& .MuiListItemIcon-root': {
       minWidth: '35px',
@@ -79,7 +80,7 @@ const OftadehNavigation = (props) => {
               component="h1"
               align="center"
             >
-              <span style={{ color: 'white' }}>ERP MAIN</span>
+              <span style={{ color: 'white', marginRight:"20px" }}>KushLiveStock ERP</span>
             </Typography>
             <img
               src={Logo}
@@ -93,6 +94,27 @@ const OftadehNavigation = (props) => {
           </div>
           <Divider />
           <List className={classes.navCustom}>
+            {
+              username==='inspector'?
+              <div>
+                {inpectorNaviegationConfig.map((item) => (
+                  <React.Fragment key={item.id}>
+                    {item.type === 'group' && <OftadehNavGroup item={item} />}
+
+                    {item.type === 'collapse' && (
+                      <OftadehNavCollapse item={item} />
+                    )}
+
+                    {item.type === 'item' && <OftadehNavItem item={item} />}
+
+                    {item.type === 'link' && <OftadehNavLink item={item} />}
+
+                    {item.type === 'divider' && <Divider className="my-16" />}
+                  </React.Fragment>
+                ))}
+              </div>:
+              <div>
+
             {username === 'admin' ? (
               <div>
                 {navigationConfig.map((item) => (
@@ -130,6 +152,9 @@ const OftadehNavigation = (props) => {
                 ))}
               </div>
             )}
+              </div>
+            }
+
           </List>
         </div>
       )}
