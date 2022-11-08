@@ -1,418 +1,207 @@
-import * as React from 'react'
-import PropTypes from 'prop-types'
-import { useTheme } from '@mui/material/styles'
-import Box from '@mui/material/Box'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableFooter from '@mui/material/TableFooter'
-import TablePagination from '@mui/material/TablePagination'
-import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
-import IconButton from '@mui/material/IconButton'
-import FirstPageIcon from '@mui/icons-material/FirstPage'
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
-import LastPageIcon from '@mui/icons-material/LastPage'
-import Button from '@mui/material/Button'
-import { useState, useRef } from 'react'
-import JoditEditor from 'jodit-react'
-import AddIcon from '@mui/icons-material/Add'
-// import { EditorState, convertToRow } from "draft-js";
-// import { Editor } from "react-draft-wysiwyg";
-// import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import TableHead from '@mui/material/TableHead'
-import OftadehLayout from '../../components/Layout/Layout'
-import OftadehBreadcrumbs from '../../components/OftadehBreadcrumbs/OftadehBreadcrumbs'
-import { Typography, makeStyles, TextField } from '@material-ui/core'
-//import AddPostRightPanels from '../../../components/extra/AddPostRightPanels/AddPostRightPanels'
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import EditIcon from '@mui/icons-material/Edit'
-import InputAdornment from '@mui/material/InputAdornment'
-import SearchIcon from '@mui/icons-material/Search'
-import { Grid, Toolbar } from '@mui/material'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
-import Slide from '@mui/material/Slide'
-import { Close } from '@material-ui/icons'
-import Divider from '@mui/material/Divider';
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="down" ref={ref} {...props} />
-})
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  
-  my3: {
-    margin: '1.3rem 0',
-  },
-  mb3: {
-    margin: '1.3rem 0',
-  },
-  mb0: {
-    marginBottom: 0,
-  },
-  mRight: {
-    marginRight: '.85rem',
-  },
-  p1: {
-    padding: '.85rem',
-  },
-  borderTextField: {
-    // - The TextField-root
-    // - Make the border more distinguishable
+import React from "react";
+import Norecords from "../../components/ui/Norecords";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import { Grid, InputAdornment, Toolbar, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import useTable from "../../components/ui/useTable";
+import Notification from "../../components/ui/Notification";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import Notify from "../../components/ui/Notify";
+import Popup from "../../components/ui/Popup";
+import Controls from "../../components/ui/controls/Controls";
+import { Search, Add } from "@mui/icons-material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
+import produce from "immer";
+import PageSpinner from "../../components/ui/PageSpinner";
+//import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import OftadehLayout from "../../components/Layout/Layout";
+import OftadehBreadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
+import { makeStyles, TextField } from "@material-ui/core";
+import { Button } from "@mui/material";
+import UserApiRequests from "../../components/request/user";
+import { url } from "../../utiles/config";
+import axios from "axios";
+const useStyles = makeStyles((them) => ({
+  card: {
+    width: 250,
+    height: 200,
 
-    // (Note: space or no space after & matters. See SASS "parent selector".)
-    '& .MuiOutlinedInput-root': {
-      // - The Input-root, inside the TextField-root
-      '& fieldset': {
-        // - The <fieldset> inside the Input-root
-        borderColor: '#203040',
+    backgroundColor: "green",
+  },
+  cardContent: {
+    fontSize: 50,
+    backgroundColor: "green",
+    height: 250,
+    color: "white",
+  },
+}));
 
-        // - Set the Input border
-      },
-      '&:hover fieldset': {
-        borderColor: '#203040',
-
-        // - Set the Input border when parent has :hover
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#203040',
-        label: {
-          display: 'none',
-        }, // - Set the Input border when parent is focused
-      },
+export default function Dashboard(props) {
+  const headCells = [
+    { id: "email", label: "Email" },
+    { id: "username", label: "User Name" },
+    { id: "role", label: "Role" },
+    { id: "enable", label: "Enable", disableSorting: true },
+    { id: "actions", label: "Actions", disableSorting: true },
+  ];
+  const [filterFn, setFilterFn] = useState({
+    fn: (items) => {
+      return items;
     },
-  },
-  formLabel: {
-    color: '#203040',
-    '&.Mui-focused': {
-      color: '#203040',
-    },
-  },
-  button: {
-    backgroundColor: '#203040',
-    color: 'white',
-    fontFamily: 'Times New Roman',
-  },
-  // demoEditor: {
-  //   border: "1px solid #eee",
-  //   padding: "5px",
-  //   borderRadius: "2px",
-  //   height: "350px"
-  // }
-}))
-function TablePaginationActions(props) {
-  const theme = useTheme()
-  const { count, page, rowsPerPage, onPageChange } = props
+  });
+  const [Q, setQ] = useState("");
+  const [loading, setLoding] = React.useState(false);
+  const [users, setUsers] = React.useState([]);
+  const { history } = props;
+  const { viewUsers, deletUser } = UserApiRequests();
+  const classes = useStyles();
+  React.useEffect(() => {
+    setLoding(true)
+    viewUsers().then((data) => {
+      console.log(data);
+      setLoding(false)
+      setUsers(data);
+    });
+  }, []);
 
-  const handleFirstPageButtonClick = (event) => {
-    onPageChange(event, 0)
-  }
+  const { TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting } =
+    useTable(users, headCells, filterFn);
+  console.log(users);
 
-  const handleBackButtonClick = (event) => {
-    onPageChange(event, page - 1)
-  }
+  useEffect(() => {
+    setFilterFn({
+      fn: (items) => {
+        const columns = ["email", "username", "role"];
 
-  const handleNextButtonClick = (event) => {
-    onPageChange(event, page + 1)
-  }
-
-  const handleLastPageButtonClick = (event) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1))
-  }
-
+        if (Q === "") return items;
+        else {
+          return items.filter((x) => {
+            return columns.some((column) => {
+              if (x[column]) {
+                return x[column].toString().toLowerCase().includes(Q);
+              }
+            });
+          });
+        }
+      },
+    });
+  }, [Q]);
+  const { NotifyMessage, notify, setNotify } = Notify();
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: "",
+    subTitle: "",
+  });
+  const onDelete = (email) => {
+    console.log(email);
+    setConfirmDialog({
+      ...confirmDialog,
+      isOpen: false,
+    });
+    deletUser(email).then((data) => {
+      console.log(data);
+      if (data.message === "Error: Unregistered user!") {
+        NotifyMessage({
+          message: data.message,
+          type: "error",
+        });
+      } else {
+        NotifyMessage({
+          message: data.message,
+          type: "success",
+        });
+        setUsers(
+          produce(users, (draft) => {
+            const index = users.findIndex((user) => user.email === email);
+            if (index !== -1) draft.splice(index, 1);
+          })
+        );
+      }
+    });
+  };
   return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-      >
-        {theme.direction === 'rtl' ? (
-          <KeyboardArrowRight />
-        ) : (
-          <KeyboardArrowLeft />
-        )}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        {theme.direction === 'rtl' ? (
-          <KeyboardArrowLeft />
-        ) : (
-          <KeyboardArrowRight />
-        )}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </Box>
-  )
-}
-
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-}
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein }
-}
-
-const rows = [
-  createData('Cupcake', 305, 3.7),
-  createData('Donut', 452, 25.0),
-  createData('Eclair', 262, 16.0),
-  createData('Frozen yoghurt', 159, 6.0),
-  createData('Gingerbread', 356, 16.0),
-  createData('Honeycomb', 408, 3.2),
-  createData('Ice cream sandwich', 237, 9.0),
-  createData('Jelly Bean', 375, 0.0),
-  createData('KitKat', 518, 26.0),
-  createData('Lollipop', 392, 0.2),
-  createData('Marshmallow', 318, 0),
-  createData('Nougat', 360, 19.0),
-  createData('Oreo', 437, 18.0),
-].sort((a, b) => (a.calories < b.calories ? -1 : 1))
-
-export default function User(props) {
-  const columns = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-  {
-    id: 'population',
-    label: 'Population',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'density',
-    label: 'Density',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toFixed(2),
-  },
-];
-
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(5)
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-  const [open, setOpen] = React.useState(false)
-  const setOpenPopup = () => {
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-  }
-  const classes = useStyles()
-  const { history } = props
-  return (
-    <OftadehLayout>
-      <Typography className={classes.mb3} variant="h5" component="h1">
-        User
-      </Typography>
-      <OftadehBreadcrumbs path={history} />
-      <Toolbar>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={8}>
-            <TextField
-              id="outlined-basic"
-              label="Search User"
-              fullWidth
-              variant="outlined"
-              className={classes.borderTextField}
-              InputLabelProps={{
-                className: classes.formLabel,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
+    <div>
+      <OftadehLayout>
+        <Typography className={classes.mb3} variant="h5" component="h1">
+          User Mangement
+        </Typography>
+        <OftadehBreadcrumbs path={history} />
+        <Toolbar>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={8}>
+              <Controls.Input
+                label="Search User"
+                fullWidth
+                value={Q}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(e) => {
+                  setQ(e.target.value.trimLeft().toLowerCase());
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Button
-              style={{
-                marginTop: '10px',
-                backgroundColor: '#203040',
-                color: 'white',
-                fontFamily: 'Times New Roman',
-              }}
-              variant="outlined"
-              startIcon={<AddIcon />}
-        
-              onClick={() => {
-                setOpenPopup()
-              }}
-            >
-              Add New
-            </Button>
-          </Grid>
-        </Grid>
-      </Toolbar>
-      <Dialog
-        fullWidth
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleClose}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <Box position="absolute" top={0} right={0}>
-          <IconButton onClick={handleClose}>
-            <Close />
-          </IconButton>
-        </Box>
-    
+        </Toolbar>
+        {loading ? (
+          <PageSpinner />
+        ) : (
+          <>
+            <TblContainer>
+              <TblHead />
+              <TableBody>
+                {recordsAfterPagingAndSorting().length > 0 ? (
+                  recordsAfterPagingAndSorting().map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{item.email}</TableCell>
+                      <TableCell>{item.username}</TableCell>
+                      {item.roles.map((items) => (
+                        <TableCell>{items.name}</TableCell>
+                      ))}
 
-        <Box
-          style={{ marginLeft: '10px', marginTop: '30px' }}
-          component="form"
-          sx={{
-            '& > :not(style)': { m: 1, width: '30ch' },
-          }}
-          noValidate
-          autoComplete="off"
-        > 
-             <Typography className={classes.mb3} variant="h5" component="h1">
-        User Form
-      </Typography>
-     
-              <Divider  sx={{ fontSize:"32px", width:"50px"}}/>
-          <TextField
-            id="outlined-basic"
-            className={classes.borderTextField}
-            InputLabelProps={{
-              className: classes.formLabel,
-            }}
-            label="FirstName"
-            variant="outlined"
-            style={{ width: '45%' }}
-          />
-          <TextField
-            style={{ width: '45%' }}
-            id="filled-basic"
-            className={classes.borderTextField}
-            InputLabelProps={{
-              className: classes.formLabel,
-            }}
-            label="LastName"
-            variant="outlined"
-          />
-          <TextField
-            style={{ width: '45%' }}
-            id="standard-basic"
-            className={classes.borderTextField}
-            InputLabelProps={{
-              className: classes.formLabel,
-            }}
-            label="Email"
-            variant="outlined"
-          />
-          <TextField
-            style={{ width: '45%' }}
-            id="standard-basic"
-            sx={{ width: 350 }}
-            className={classes.borderTextField}
-            InputLabelProps={{
-              className: classes.formLabel,
-            }}
-            label="UserName"
-            variant="outlined"
-          />
-          <TextField
-            id="standard-basic"
-            style={{ width: '45%' }}
-            className={classes.borderTextField}
-            InputLabelProps={{
-              className: classes.formLabel,
-            }}
-            label="UserName"
-            variant="outlined"
-          />
-        </Box>
-             <Button style={{ backgroundColor: '#203040', width:'70px',marginLeft:"20px", marginBottom:"30px",marginTop:"30px" ,color: 'white' }}>
-                Add
-              </Button>
-      </Dialog>
-      <TableContainer style={{ marginTop: '20px', marginLeft:"25px",}} component={Paper}>
-        <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
-          <TableHead
-            style={{
-              backgroundColor: '#203040',
-              color: 'white',
-              fontFamily: 'Times New Roman',
-            }}
-          >
-            <TableRow style={{ color: 'white' }}>
-              <TableCell style={{ color: 'white' }} align="right">
-                First Name{' '}
-              </TableCell>
-              <TableCell style={{ color: 'white' }} align="right">
-                Last Name
-              </TableCell>
-              <TableCell style={{ color: 'white' }} align="right">
-                PhoneNo
-              </TableCell>
-              <TableCell style={{ color: 'white' }} align="right">
-                Email
-              </TableCell>
-              <TableCell style={{ color: 'white' }} align="right">
-                UserName
-              </TableCell>
+                      <TableCell>{item.enabled ? "True" : "False"}</TableCell>
 
-              <TableCell style={{ color: 'white' }} align="right">
-                Action
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableFooter></TableFooter>
-        </Table>
-      </TableContainer>
-    </OftadehLayout>
-  )
+                      <TableCell>
+                        <Controls.ActionButton
+                          color="secondary"
+                          title="Delete"
+                          onClick={() => {
+                            setConfirmDialog({
+                              isOpen: true,
+                              title: "Are you sure to delete this User?",
+                              subTitle: "You can't undo this operation",
+                              onConfirm: () => {
+                                onDelete(item.email);
+                              },
+                            });
+                          }}
+                        >
+                          <DeleteOutlineIcon fontSize="medium" />
+                        </Controls.ActionButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <Norecords col={5} />
+                )}
+              </TableBody>
+            </TblContainer>
+            <TblPagination />
+          </>
+        )}
+        <ConfirmDialog
+          confirmDialog={confirmDialog}
+          setConfirmDialog={setConfirmDialog}
+        />
+        <Notification notify={notify} setNotify={setNotify} />
+      </OftadehLayout>
+    </div>
+  );
 }

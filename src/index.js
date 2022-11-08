@@ -9,7 +9,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { loginSlice } from './slice/login';
 import { registerSlice } from './slice/register';
 import{ranchSlice} from './slice/ranch'
-
 import {ranchManagerSlice} from './slice/ranchManager'
 const store = configureStore({
   reducer: {

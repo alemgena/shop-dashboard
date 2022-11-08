@@ -5,20 +5,11 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import { InputBase, Badge } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
-import MailIcon from "@material-ui/icons/Mail";
-import TodayIcon from "@material-ui/icons/Today";
-import Brightness4Icon from "@material-ui/icons/Brightness4";
-import Brightness7Icon from "@material-ui/icons/Brightness7";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import OftadehAvatarMenu from "../OftadehAvatarMenu/OftadehAvatarMenu";
 import clsx from "clsx";
 import NavigationContext from "../../context/NavigationContext";
 import ThemeContext from "../../context/ThemeContext";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useHistory } from 'react-router';
-import { loginSlice } from '../../slice/login'
 import { useDispatch, useSelector } from 'react-redux'
 import { Box, Button, Popover } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -113,35 +104,12 @@ const OftadehAppBar = (props) => {
   const { open, handleDrawerToggle, handleRightPanelOpen } = React.useContext(
     NavigationContext
   );
-
   const { setThemeName, curThemeName } = React.useContext(ThemeContext);
-
     const navgate = useHistory()
-     const loginActions = loginSlice.actions
     const role= localStorage.getItem('role');
     console.log(role)
   const dispatch = useDispatch()
   const LoginOut=()=>{
-    if(role==='admin'){
-     navgate.push('/adminLogin')
-    }
-
-    else if(role==='ranchManager'){
-           navgate.push('/ranchManagerLogin')
-    }
-      else if(role==='inspector'){
-  navgate.push(
-        "/inspectorLogin")
-  }
-        localStorage.removeItem('token')
-    localStorage.removeItem('user_id')
-    localStorage.removeItem('loginInfo')
-    localStorage.removeItem('userInfo')
-    localStorage.removeItem('role')
-    dispatch(loginActions.setLoggedUser([]))
-    //dispatch(loginActions.initialState(''));
-
-    dispatch(loginActions.setUserInformation([]))
    
   }
     const handleClose = () => {

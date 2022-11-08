@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./App.css";
-import OftadehRoutes from "./components/OftadehRoutes/OftadehRoutes";
+import OftadehRoutes from "./components/Routes/Routes";
 import { ThemeProvider } from "@material-ui/core/styles";
-import getTheme from "./oftadeh-configs/themeConfig";
+import getTheme from "./RouteConfigs/themeConfig";
 import ThemeContext from "./context/ThemeContext";
 
 const App = () => {
@@ -10,13 +10,13 @@ const App = () => {
 
   const [themeType, setThemeType] = useState(curThemeName);
 
-  const setThemeName = themeName => {
+  const setThemeName = (themeName) => {
     localStorage.setItem("appTheme", themeName);
     setThemeType(themeName);
   };
 
   const theme = getTheme({
-    paletteType: themeType
+    paletteType: themeType,
   });
 
   return (

@@ -11,8 +11,8 @@ import { makeStyles } from '@material-ui/core/styles'
 const useStyles = makeStyles((theme) => ({
   dialog: {
     padding: theme.spacing(2),
-    position: "absolute",
-    top: theme.spacing(5),
+    top: 100,
+  
   },
   dialogContent: {
     textAlign: "center",
@@ -38,7 +38,7 @@ export default function ConfirmDialog(props) {
   const classes = useStyles();
 
   return (
-    <Dialog open={confirmDialog.isOpen} classes={{ paper: classes.dialog }}>
+    <Dialog open={confirmDialog.isOpen} classes={{ paper: classes.dialog }}  PaperProps={{ sx: { position: "fixed"}}}>
       <DialogContent className={classes.dialogContent}>
         <Typography variant="h6">{confirmDialog.title}</Typography>
         <Typography variant="subtitle2">{confirmDialog.subTitle}</Typography>
