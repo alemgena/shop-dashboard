@@ -14,11 +14,9 @@ const App = () => {
     localStorage.setItem("appTheme", themeName);
     setThemeType(themeName);
   };
-
   const theme = getTheme({
     paletteType: themeType,
   });
-
   return (
     <ThemeContext.Provider value={{ setThemeName, curThemeName }}>
       <ThemeProvider theme={theme}>

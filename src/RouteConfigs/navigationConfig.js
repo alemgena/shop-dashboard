@@ -18,10 +18,10 @@ const navigationConfig = [
       },
                    {
        id: "users",
-        title: "Manage Users",
+        title: "Manage Shops",
         type: "item",
         icon: <FormatAlignLeftIcon/>,
-        url: "/user",
+        url: "/shops",
         exact: true,
       },
     ],

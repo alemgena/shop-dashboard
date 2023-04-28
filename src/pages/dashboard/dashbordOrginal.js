@@ -13,6 +13,7 @@ import { url } from '../../utiles/config'
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
+import UserApiRequests from "../../components/request/shop";
 const useStyles = makeStyles((them) => ({
   card: {
     width: 250,
@@ -63,18 +64,20 @@ Item.propTypes = {
 
 export default function Dashboard(props) {
   const history=useHistory()
-  const [loading, setLoding] = React.useState(false)
+  const [loading, setLoding] = React.useState(true)
   const [users, setUsers] = React.useState([])
   const classes = useStyles()
+  const { viewUsers, deletUser } = UserApiRequests();
   React.useEffect(() => {
-    setLoding(true)
-    axios.get(`${url}/api/auth/getAllUser/`).then((response)=>{
-      console.log(response)
-      setLoding(false)
-      setUsers(response.data)
-     })
-  }, [])
+    viewUsers().then((data) => {
+      if(data){
+      setLoding(false);
+      setUsers(data.data);
+      }
+    });
 
+  }, [])
+console.log(users)
   return (
     <div>
         <OftadehLayout>
@@ -96,7 +99,7 @@ export default function Dashboard(props) {
                   >
                     <Item>
                           <ButtonBase  onClick={() => {
-                          history.push('/user');
+                          history.push('/shops');
                         }}>
                       <Card className={classes.card}
                       
@@ -113,7 +116,7 @@ export default function Dashboard(props) {
                               style={{ minHeight: '100vh' }}
                             >
                               {users.length}
-                              <div>Users</div>
+                              <div>Shops</div>
                             </Grid>
                           </Grid>
                         </CardContent>

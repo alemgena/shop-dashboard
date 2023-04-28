@@ -1,8 +1,8 @@
 import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import OftadehListItemIcon from "./sections/OftadehListItemIcon";
-import OftadehListItemAvatar from "./sections/OftadehListItemAvatar";
+import OftadehListItemIcon from "./sections/ListItemIcon";
+import OftadehListItemAvatar from "./sections/ListItemAvatar";
 
 const OftadehListItems = props => {
   const { data, type, divider, button } = props;

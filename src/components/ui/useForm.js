@@ -12,7 +12,6 @@ export function useForm(initialFValues, validateOnChange = false, validate) {
       value = value.trimLeft();
     setValues({
       ...values,
-      logginError: "",
 
       [name]:
         name === "phone_no" || name === "office_no"

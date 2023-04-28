@@ -58,7 +58,7 @@ const OftadehNavigation = (props) => {
           >
             <span style={{ color: "white", marginRight: "20px" }}>
               {" "}
-              Data Converter
+              ISZO
             </span>
           </Typography>
         </div>

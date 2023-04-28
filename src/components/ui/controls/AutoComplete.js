@@ -6,6 +6,7 @@ import {
 import Controls from "./Controls";
 import { Box } from "@mui/system";
 const AutoComplete = ({ values, options, setChange, label, error }) => {
+  console.log(options)
   const [open, setOpen] = React.useState(false);
   const loading = open && options.length === 0;
   return (
@@ -19,11 +20,11 @@ const AutoComplete = ({ values, options, setChange, label, error }) => {
       }}
       loading={loading}
       autoHighlight
-      value={values.ranch}
+      value={values.label}
       onChange={(event, newValue) => {
-        setChange({ ...values, ranch: newValue });
+        setChange({ ...values, label: newValue });
       }}
-      getOptionLabel={(option) => option.name}
+      getOptionLabel={(option) => option.price}
       options={options}
       sx={{ width: "100%" }}
       renderOption={(props, option) => (

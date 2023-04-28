@@ -6,13 +6,13 @@ import TableCell from "@mui/material/TableCell";
 import TablePagination from "@mui/material/TablePagination";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { makeStyles } from '@material-ui/core/styles'
-
+import { useTheme } from '@mui/material/styles';
 const useStyles = makeStyles((theme) => ({
   table: {
-    marginTop: theme.spacing(3),
+    marginTop: useTheme().spacing(3),
     "& thead th": {
       fontWeight: "600",
-      color: theme.palette.secondary.contrastText,
+      color: useTheme().palette.secondary.contrastText,
       backgroundColor: '#203040',
     },
     "& tbody td": {
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
     },
     "& .MuiTableCell-root": {
-      padding: theme.spacing(1.5),
+      padding: useTheme().spacing(1.5),
     },
   },
 }));

@@ -12,18 +12,15 @@ import Notify from "../../components/ui/Notify";
 import Popup from "../../components/ui/Popup";
 import Controls from "../../components/ui/controls/Controls";
 import { Search, Add } from "@mui/icons-material";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import EditIcon from "@mui/icons-material/Edit";
+import ShopForm from '../../components/forms/ShopForm'
 import produce from "immer";
 import PageSpinner from "../../components/ui/PageSpinner";
-//import OftadehLayout from '../../components/OftadehLayout/OftadehLayout'
+import PaidIcon from '@mui/icons-material/Paid';
 import OftadehLayout from "../../components/Layout/Layout";
 import OftadehBreadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
 import { makeStyles, TextField } from "@material-ui/core";
-import { Button } from "@mui/material";
-import UserApiRequests from "../../components/request/user";
-import { url } from "../../utiles/config";
-import axios from "axios";
+import UserApiRequests from "../../components/request/shop";
+import BlockIcon from "@mui/icons-material/Block";
 const useStyles = makeStyles((them) => ({
   card: {
     width: 250,
@@ -38,13 +35,16 @@ const useStyles = makeStyles((them) => ({
     color: "white",
   },
 }));
-
 export default function Dashboard(props) {
+  const currenDate = new Date();
+  const futureDate = new Date(currenDate);
+  futureDate.setMonth(currenDate.getMonth() + 3);
   const headCells = [
+    { id: "shopName", label: "Shop Name" },
+    { id: "shopAddress", label: "Shop Address" },
+    { id: "owner", label: "Owner" },
     { id: "email", label: "Email" },
-    { id: "username", label: "User Name" },
-    { id: "role", label: "Role" },
-    { id: "enable", label: "Enable", disableSorting: true },
+    { id: "telephone", label: "Telephone" },
     { id: "actions", label: "Actions", disableSorting: true },
   ];
   const [filterFn, setFilterFn] = useState({
@@ -54,28 +54,24 @@ export default function Dashboard(props) {
   });
   const [Q, setQ] = useState("");
   const [loading, setLoding] = React.useState(false);
-  const [users, setUsers] = React.useState([]);
+  const [shops, setShops] = React.useState([]);
+  const [openPopup, setOpenPopup] = useState(false);
   const { history } = props;
   const { viewUsers, deletUser } = UserApiRequests();
   const classes = useStyles();
   React.useEffect(() => {
-    setLoding(true)
+    setLoding(true);
     viewUsers().then((data) => {
-      console.log(data);
-      setLoding(false)
-      setUsers(data);
+      setLoding(false);
+      setShops(data.data);
     });
   }, []);
-
   const { TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting } =
-    useTable(users, headCells, filterFn);
-  console.log(users);
-
+    useTable(shops, headCells, filterFn);
   useEffect(() => {
     setFilterFn({
       fn: (items) => {
-        const columns = ["email", "username", "role"];
-
+        const columns = ["shopName", "shopAddress"];
         if (Q === "") return items;
         else {
           return items.filter((x) => {
@@ -96,7 +92,6 @@ export default function Dashboard(props) {
     subTitle: "",
   });
   const onDelete = (email) => {
-    console.log(email);
     setConfirmDialog({
       ...confirmDialog,
       isOpen: false,
@@ -113,27 +108,32 @@ export default function Dashboard(props) {
           message: data.message,
           type: "success",
         });
-        setUsers(
-          produce(users, (draft) => {
-            const index = users.findIndex((user) => user.email === email);
+        setShops(
+          produce(shops, (draft) => {
+            const index = shops.findIndex((user) => user.email === email);
             if (index !== -1) draft.splice(index, 1);
           })
         );
       }
     });
   };
+  const [shopName, setShopName] = useState();
+  const handleClick = (name) => {
+    setShopName(name)
+    setOpenPopup(true);
+  };
   return (
     <div>
       <OftadehLayout>
         <Typography className={classes.mb3} variant="h5" component="h1">
-          User Mangement
+          Shop Mangement
         </Typography>
         <OftadehBreadcrumbs path={history} />
         <Toolbar>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={8}>
               <Controls.Input
-                label="Search User"
+                label="Search Shop"
                 fullWidth
                 value={Q}
                 InputProps={{
@@ -160,31 +160,55 @@ export default function Dashboard(props) {
                 {recordsAfterPagingAndSorting().length > 0 ? (
                   recordsAfterPagingAndSorting().map((item, index) => (
                     <TableRow key={index}>
+                      <TableCell>{item.shopName}</TableCell>
+                      <TableCell>{item.city}</TableCell>
+                      <TableCell></TableCell>
                       <TableCell>{item.email}</TableCell>
-                      <TableCell>{item.username}</TableCell>
-                      {item.roles.map((items) => (
-                        <TableCell>{items.name}</TableCell>
-                      ))}
-
-                      <TableCell>{item.enabled ? "True" : "False"}</TableCell>
-
+                      <TableCell>{item.phone}</TableCell>
                       <TableCell>
-                        <Controls.ActionButton
-                          color="secondary"
-                          title="Delete"
-                          onClick={() => {
-                            setConfirmDialog({
-                              isOpen: true,
-                              title: "Are you sure to delete this User?",
-                              subTitle: "You can't undo this operation",
-                              onConfirm: () => {
-                                onDelete(item.email);
-                              },
-                            });
-                          }}
-                        >
-                          <DeleteOutlineIcon fontSize="medium" />
-                        </Controls.ActionButton>
+                        {item.isDisabled ? (
+                          <Controls.ActionButton
+                            color="secondary"
+                            title="Disable"
+                            onClick={() => {
+                              setConfirmDialog({
+                                isOpen: true,
+                                title: "Are you sure to Enable this Shop?",
+                                subTitle: "You can't undo this operation",
+                                onConfirm: () => {
+                                  onDelete(item.email);
+                                },
+                              });
+                            }}
+                          >
+                            <BlockIcon fontSize="medium" />
+                          </Controls.ActionButton>
+                        ) : (
+                          <Controls.ActionButton
+                            color="secondary"
+                            title="Enable"
+                            onClick={() => {
+                              setConfirmDialog({
+                                isOpen: true,
+                                title: "Are you sure to Disable this Shop?",
+                                onConfirm: () => {
+                                  onDelete(item.email);
+                                },
+                              });
+                            }}
+                          >
+                            <BlockIcon fontSize="medium" />
+                          </Controls.ActionButton>
+                        )}
+                         <Controls.ActionButton
+                            color="secondary"
+                            title="Pay"
+                            onClick={() => {
+                            handleClick(item.shopName)
+                            }}
+                          >
+                            <PaidIcon fontSize="medium" />
+                          </Controls.ActionButton>
                       </TableCell>
                     </TableRow>
                   ))
@@ -201,6 +225,13 @@ export default function Dashboard(props) {
           setConfirmDialog={setConfirmDialog}
         />
         <Notification notify={notify} setNotify={setNotify} />
+        <Popup
+          title={`Are you sure you want to renew ${shopName?shopName:null} period until Date`}
+          openPopup={openPopup}
+          setOpenPopup={setOpenPopup}
+        >
+          <ShopForm shopName={shopName}/>
+        </Popup>
       </OftadehLayout>
     </div>
   );

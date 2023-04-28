@@ -51,6 +51,7 @@ const classes=useStyles();
     <TextField
       variant="outlined"
       label={label}
+      fullWidth
       name={name}
       className={classes.borderTextField}
       value={value}

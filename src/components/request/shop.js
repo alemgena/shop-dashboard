@@ -5,7 +5,7 @@ import { url } from "../../utiles/config";
 import fetch from "isomorphic-fetch";
 const UserApiRequests = () => {
   const viewUsers = () => {
-    return fetch(`${url}/api/auth/getAllUser/`, {
+    return fetch(`${url}/shop`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -13,7 +13,6 @@ const UserApiRequests = () => {
       },
     })
       .then((response) => {
-        console.log(response);
         return response.json();
       })
       .catch((err) => err);
