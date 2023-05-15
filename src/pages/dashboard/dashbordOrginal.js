@@ -115,7 +115,7 @@ console.log(users)
                               justify="center"
                               style={{ minHeight: '100vh' }}
                             >
-                              {users.length}
+                              {users?.length}
                               <div>Shops</div>
                             </Grid>
                           </Grid>

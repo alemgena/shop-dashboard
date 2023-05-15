@@ -12,14 +12,14 @@ import Notify from "../../components/ui/Notify";
 import Popup from "../../components/ui/Popup";
 import Controls from "../../components/ui/controls/Controls";
 import { Search, Add } from "@mui/icons-material";
-import ShopForm from '../../components/forms/ShopForm'
+import ShopForm from "../../components/forms/ShopForm";
 import produce from "immer";
 import PageSpinner from "../../components/ui/PageSpinner";
-import PaidIcon from '@mui/icons-material/Paid';
+import PaidIcon from "@mui/icons-material/Paid";
 import OftadehLayout from "../../components/Layout/Layout";
 import OftadehBreadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
 import { makeStyles, TextField } from "@material-ui/core";
-import UserApiRequests from "../../components/request/shop";
+import ShopApiRequests from "../../components/request/shop";
 import BlockIcon from "@mui/icons-material/Block";
 const useStyles = makeStyles((them) => ({
   card: {
@@ -57,11 +57,11 @@ export default function Dashboard(props) {
   const [shops, setShops] = React.useState([]);
   const [openPopup, setOpenPopup] = useState(false);
   const { history } = props;
-  const { viewUsers, deletUser } = UserApiRequests();
+  const { viewShops } = ShopApiRequests();
   const classes = useStyles();
   React.useEffect(() => {
     setLoding(true);
-    viewUsers().then((data) => {
+    viewShops().then((data) => {
       setLoding(false);
       setShops(data.data);
     });
@@ -96,31 +96,15 @@ export default function Dashboard(props) {
       ...confirmDialog,
       isOpen: false,
     });
-    deletUser(email).then((data) => {
-      console.log(data);
-      if (data.message === "Error: Unregistered user!") {
-        NotifyMessage({
-          message: data.message,
-          type: "error",
-        });
-      } else {
-        NotifyMessage({
-          message: data.message,
-          type: "success",
-        });
-        setShops(
-          produce(shops, (draft) => {
-            const index = shops.findIndex((user) => user.email === email);
-            if (index !== -1) draft.splice(index, 1);
-          })
-        );
-      }
-    });
   };
   const [shopName, setShopName] = useState();
-  const handleClick = (name) => {
-    setShopName(name)
+  const [shopId, setShopId] = useState();
+  const [shopEmail, setShopEmail] = useState();
+  const handleClick = (name, shopId, shopEmail) => {
+    setShopName(name);
     setOpenPopup(true);
+    setShopId(shopId);
+    setShopEmail(shopEmail);
   };
   return (
     <div>
@@ -200,15 +184,15 @@ export default function Dashboard(props) {
                             <BlockIcon fontSize="medium" />
                           </Controls.ActionButton>
                         )}
-                         <Controls.ActionButton
-                            color="secondary"
-                            title="Pay"
-                            onClick={() => {
-                            handleClick(item.shopName)
-                            }}
-                          >
-                            <PaidIcon fontSize="medium" />
-                          </Controls.ActionButton>
+                        <Controls.ActionButton
+                          color="secondary"
+                          title="Pay"
+                          onClick={() => {
+                            handleClick(item.shopName, item.shopID,item.email?item.email:'');
+                          }}
+                        >
+                          <PaidIcon fontSize="medium" />
+                        </Controls.ActionButton>
                       </TableCell>
                     </TableRow>
                   ))
@@ -224,13 +208,15 @@ export default function Dashboard(props) {
           confirmDialog={confirmDialog}
           setConfirmDialog={setConfirmDialog}
         />
-        <Notification notify={notify} setNotify={setNotify} />
+        <Notification notify={notify}  setNotify={setNotify} />
         <Popup
-          title={`Are you sure you want to renew ${shopName?shopName:null} period until Date`}
+          title={`Are you sure you want to renew ${
+            shopName ? shopName : null
+          } period until Date`}
           openPopup={openPopup}
           setOpenPopup={setOpenPopup}
         >
-          <ShopForm shopName={shopName}/>
+          <ShopForm  setOpenPopup={setOpenPopup} shopName={shopName}  shopEmail={shopEmail} shopID={shopId} />
         </Popup>
       </OftadehLayout>
     </div>
