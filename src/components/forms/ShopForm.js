@@ -39,7 +39,7 @@ const RanchForm = ({ setOpenPopup, shopName, shopEmail, shopID }) => {
     };
     fetchShop();
   }, [shopID]);
-  const [totalPaid, setTotalPaid] = useState("");
+  const [totalPaid, setTotalPaid] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmit(true);
@@ -49,7 +49,7 @@ const RanchForm = ({ setOpenPopup, shopName, shopEmail, shopID }) => {
         email: email,
         shopName: shopEmail,
         currentStopDate: currenStopDate,
-        totalPaid: totalPaid,
+        totalPaid: totalPaid.price,
       });
       if (data) {
         setOpenPopup(false);
@@ -60,7 +60,7 @@ const RanchForm = ({ setOpenPopup, shopName, shopEmail, shopID }) => {
   };
   const handlPriceChange = (event) => {
     console.log(event);
-    setTotalPaid(event.price);
+    setTotalPaid(event);
   };
   return (
     <Form onSubmit={handleSubmit}>
@@ -70,7 +70,7 @@ const RanchForm = ({ setOpenPopup, shopName, shopEmail, shopID }) => {
             value={totalPaid}
             id="combo-box-demo"
             options={priceLables}
-            getOptionLabel={(option) => option.label}
+            getOptionLabel={(option) => option.price}
             onChange={(event, newValue) => {
               handlPriceChange(newValue);
             }}

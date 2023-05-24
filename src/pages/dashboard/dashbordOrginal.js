@@ -13,7 +13,7 @@ import { url } from '../../utiles/config'
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
-import UserApiRequests from "../../components/request/shop";
+import ShopApiRequests from "../../components/request/shop";
 const useStyles = makeStyles((them) => ({
   card: {
     width: 250,
@@ -67,9 +67,9 @@ export default function Dashboard(props) {
   const [loading, setLoding] = React.useState(true)
   const [users, setUsers] = React.useState([])
   const classes = useStyles()
-  const { viewUsers, deletUser } = UserApiRequests();
+  const { viewShops } = ShopApiRequests();
   React.useEffect(() => {
-    viewUsers().then((data) => {
+    viewShops().then((data) => {
       if(data){
       setLoding(false);
       setUsers(data.data);
